@@ -461,3 +461,4 @@
   lan.addEventListener('pointermove',function(e){if(reduce) return; var r=lan.getBoundingClientRect(); swing.style.setProperty('--rot',((((e.clientX-r.left)/r.width)-.5)*14).toFixed(2)+'deg');});
   lan.addEventListener('pointerleave',function(){swing.style.setProperty('--rot','0deg');});
 })();
+/* 2026-02-11T09:20:00 */
