@@ -11,10 +11,10 @@
 
   /* ---------- data ---------- */
   var PROJECTS=[
-    {id:'specguard',wide:1,cat:'web ai',tag:'backend · ai',kind:'API analysis platform',title:'SpecGuard',
+    {id:'specguard',cat:'web ai',tag:'backend · ai',kind:'API analysis platform',title:'SpecGuard',
      desc:'Reads OpenAPI specs and source code, then generates documentation, examples and test cases. Compares API versions to flag breaking changes in endpoints, request schemas and response contracts, and answers questions through a RAG assistant.',
      stack:['.NET Core','FastAPI','React','PostgreSQL','RAG'],art:'diff'},
-    {id:'selfhosted',wide:1,cat:'ai web',tag:'ai/ml · backend',kind:'runs offline',title:'Self-Hosted AI Support System',
+    {id:'selfhosted',cat:'ai web',tag:'ai/ml · backend',kind:'runs offline',title:'Self-Hosted AI Support System',
      desc:'Document Q&A with no cloud calls. Hierarchical chunking, a FAISS semantic index, and Llama-3.2-1B running locally through llama.cpp with quantization and GPU acceleration. Packaged in Docker and covered by 40+ API test cases at an 85% pass rate.',
      stack:['Python','FastAPI','FAISS','llama.cpp','Docker'],art:'flow'},
     {id:'fundoo',cat:'web',tag:'full-stack',kind:'BridgeLabZ',title:'Fundoo Notes',
@@ -351,7 +351,7 @@
   show(0,0,false);
 
   /* ---------- journey: gantt + cards ---------- */
-  var MS=new Date(2022,5,1), TOTAL=54;
+  var TOTAL=54;
   function mi(s,end){var p=s.split('-'); var y=parseInt(p[0],10), m=parseInt(p[1],10)-1; return (y-2022)*12+(m-5)+(end?1:0);}
   function fmt(s){if(s==='now') return 'now'; var p=s.split('-'); return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[1],10)-1]+' '+p[0];}
   function dur(r){var a=mi(r.s), b=r.e==='now'?TOTAL-1:mi(r.e,true)-1; var m=b-a+1, y=Math.floor(m/12), mm=m%12; return (y?y+' yr'+(y>1?'s':'')+(mm?' ':''):'')+(mm?mm+' mo':'');}
@@ -370,7 +370,7 @@
   });
   gt.innerHTML=html;
   var nowIdx=(new Date().getFullYear()-2022)*12+new Date().getMonth()-5+.5; nowIdx=Math.max(0,Math.min(TOTAL,nowIdx));
-  var tr=$$('.track2',gt); var td=document.createElement('div'); td.className='today'; td.style.left=(nowIdx/TOTAL*100)+'%';
+  var td=document.createElement('div'); td.className='today';
   /* the today marker spans all lane rows, so draw it on the grid itself */
   td.style.cssText='position:absolute;top:30px;bottom:0;border-left:1px dashed var(--of);z-index:2;pointer-events:none;left:calc(168px + (100% - 168px)*'+(nowIdx/TOTAL)+')';
   gt.style.position='relative'; gt.appendChild(td);

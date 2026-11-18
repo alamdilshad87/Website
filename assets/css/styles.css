@@ -218,35 +218,12 @@ h3{margin:0}
 .chip:hover{border-color:var(--fg);transform:translateY(-2px)}
 .chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .count{margin:0 0 18px;font:400 .78rem var(--f-mono);color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;grid-auto-flow:dense}
-@media (max-width:1020px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:640px){.grid{grid-template-columns:minmax(0,1fr)}}
-@property --ang{syntax:"<angle>";initial-value:0deg;inherits:false}
-.card{--rx:0deg;--ry:0deg;position:relative;display:flex;flex-direction:column;min-width:0;background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);transform:perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry));transition:transform .25s var(--ease),border-color .3s;will-change:transform}
-.card.wide{grid-column:span 2}
-@media (max-width:640px){.card.wide{grid-column:auto}}
-.card::after{content:"";position:absolute;inset:-1px;padding:1px;pointer-events:none;background:conic-gradient(from var(--ang),transparent 0 62%,var(--of),var(--pf),var(--tf),transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);opacity:0;transition:opacity .35s;animation:ang 4s linear infinite}
-@keyframes ang{to{--ang:360deg}}
-.card:hover::after{opacity:1}
-.glare{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(280px circle at var(--px,50%) var(--py,50%),color-mix(in srgb,var(--fg) 12%,transparent),transparent 65%)}
-.card:hover .glare{opacity:1}
-.card.fresh{animation:pop .55s var(--ease) both}
 @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
-.cv{position:relative;display:grid;place-items:center;height:128px;border-bottom:1px solid var(--line);background:radial-gradient(circle at 50% 120%,color-mix(in srgb,var(--cvc,var(--pf)) 30%,transparent),transparent 70%),repeating-linear-gradient(90deg,transparent 0 23px,var(--grid) 23px 24px),repeating-linear-gradient(0deg,transparent 0 23px,var(--grid) 23px 24px);overflow:hidden}
-.cv svg{width:min(100%,240px);height:100%}
-.cv svg *{vector-effect:non-scaling-stroke}
-.card.wide .cv{height:auto;min-height:128px;padding:14px;place-items:stretch}
-.cb{display:flex;flex-direction:column;gap:11px;flex:1;padding:20px 22px 20px}
 .ch{display:flex;justify-content:space-between;gap:10px;font:500 .7rem var(--f-mono);text-transform:uppercase;letter-spacing:.09em}
 .ch .tag{color:var(--o)}
 .ch .kind{color:var(--muted);text-align:right}
-.card h3{font:800 1.42rem/1.12 var(--f-display);font-variation-settings:"wdth" 92;letter-spacing:-.02em;text-wrap:balance}
-.card p{margin:0;color:var(--muted);font-size:.95rem}
 .stack{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:6px}
 .stack span{padding:3px 9px;font:400 .72rem var(--f-mono);border:1px solid var(--line2);color:var(--fg)}
-.card.wide{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.card.wide .cv{border-bottom:0;border-left:1px solid var(--line);order:2}
-@media (max-width:640px){.card.wide{display:flex}.card.wide .cv{border-left:0;border-bottom:1px solid var(--line);order:0}}
 .viz{width:100%;padding:12px 14px;background:var(--bg);border:1px dashed var(--line2);overflow-x:auto;font:400 .76rem/1.75 var(--f-mono);align-self:center}
 .viz .row{display:block;white-space:pre}
 .viz .del{color:var(--o)}.viz .add{color:var(--t)}
@@ -261,9 +238,7 @@ h3{margin:0}
 .art .st2{fill:none;stroke:var(--of);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .art .st3{fill:none;stroke:var(--tf);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .art .fo{fill:var(--of)}.art .fp{fill:var(--pf)}.art .ft{fill:var(--tf)}.art .fv{fill:var(--vf)}
-.card:hover .art .pulse{animation:pulse 1.2s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.35}}
-.card:hover .art .draw{stroke-dasharray:260;animation:draw 1.6s var(--ease) both}
 @keyframes draw{from{stroke-dashoffset:260}to{stroke-dashoffset:0}}
 .more{margin:28px 0 0}
 .wk{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(22px,4vw,60px);align-items:start}
