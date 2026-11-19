@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { CHAPTERS } from '../data/chapters';
 import { fmt, ROLES } from '../data/journey';
 import { PROJECTS } from '../data/projects';
-import { asset, SECTIONS, SITE } from '../data/site';
+import { asset, getEmail, SECTIONS, SITE } from '../data/site';
 import { SKILLS } from '../data/skills';
 import { copyText, emit, scrollToId, useReduced } from '../lib/hooks';
 
@@ -30,7 +30,7 @@ function Run({ c, ctx, children }: { c: string; ctx: Ctx; children?: ReactNode }
 
 const COMMANDS = [
   'help', 'hi', 'hello', 'about', 'whoami', 'neofetch', 'projects', 'open', 'experience', 'git log', 'education', 'skills', 'tree',
-  'certs', 'resume', 'portfolio', 'contact', 'hire', 'copy email', 'goto', 'ls', 'theme', 'clear', 'coffee', 'joke', 'fortune', 'cowsay',
+  'certs', 'resume', 'portfolio', 'contact', 'hire', 'email', 'copy email', 'goto', 'ls', 'theme', 'clear', 'coffee', 'joke', 'fortune', 'cowsay',
   'matrix', 'weather', 'ping', 'date', 'echo', 'exit', 'sudo hire-me',
 ];
 
@@ -216,13 +216,16 @@ function run(raw: string, ctx: Ctx): Result {
       if (SITE.portfolio) { window.open(asset(SITE.portfolio), '_blank', 'noopener'); return { out: [ok('opening the design portfolio (creative side) ↗')] }; }
       return { out: [o('The design portfolio is on its way.')] };
 
+    case 'email':
+      return SITE.emailEnc ? { out: [o(<>email     <b>{getEmail()}</b></>)] } : { out: [er('no email set')] };
+
     case 'contact':
       return {
         out: [
           o(<>linkedin  <a href={SITE.linkedin} target="_blank" rel="noopener noreferrer">in/alamdilshad87</a></>),
           o(<>github    <a href={SITE.github} target="_blank" rel="noopener noreferrer">alamdilshad87</a></>),
           o(<>behance   <a href={SITE.behance} target="_blank" rel="noopener noreferrer">alamdilshad87</a></>),
-          ...(SITE.email ? [o(<>email     {SITE.email} <Run c="copy email" ctx={ctx}>copy</Run></>)] : []),
+          ...(SITE.emailEnc ? [o(<>email     <i>hidden from bots ·</i> <Run c="email" ctx={ctx}>show</Run><Run c="copy email" ctx={ctx}>copy</Run></>)] : []),
           o(<i>or type <Run c="hire" ctx={ctx} /> to write to me from here</i>),
         ],
       };
@@ -231,7 +234,7 @@ function run(raw: string, ctx: Ctx): Result {
       return { out: [ok('Let’s write to Dilshad. (type cancel anytime)'), o('What’s your name?')], fx: 'hire' };
 
     case 'copy':
-      if (arg === 'email' && SITE.email) { void copyText(SITE.email); return { out: [ok('email copied to clipboard ✓')] }; }
+      if (arg === 'email' && SITE.emailEnc) { void copyText(getEmail()); return { out: [ok('email copied to clipboard ✓')] }; }
       return { out: [er('usage: copy email')] };
 
     case 'goto': case 'cd': {
@@ -351,8 +354,8 @@ export function Terminal() {
       setHire(null);
       const subject = encodeURIComponent(`Hello from ${hire.name} (via your portfolio)`);
       const body = encodeURIComponent(`${t}\n\n— ${hire.name}`);
-      push(t, [ok('Opening your mail app with the message ready to send ✓'), o(<i>nothing opened? email {SITE.email} directly</i>)], 'msg ›');
-      window.location.href = `mailto:${SITE.email}?subject=${subject}&body=${body}`;
+      push(t, [ok('Opening your mail app with the message ready to send ✓'), o(<i>nothing opened? type email to see the address</i>)], 'msg ›');
+      window.location.href = `mailto:${getEmail()}?subject=${subject}&body=${body}`;
       return;
     }
     if (cmd.trim()) setHist((h) => [cmd, ...h.filter((x) => x !== cmd)].slice(0, 30));

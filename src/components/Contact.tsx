@@ -1,10 +1,10 @@
 import { motion, useMotionValue, useSpring } from 'motion/react';
 import { useState } from 'react';
-import { asset, SITE } from '../data/site';
+import { asset, getEmail, SITE } from '../data/site';
 import { copyText, useReduced } from '../lib/hooks';
 import { Magnetic } from './ui';
 
-function Cmd({ label, url, open = true }: { label: string; url: string; open?: boolean }) {
+function Cmd({ label, url }: { label: string; url: string }) {
   const [state, setState] = useState<'idle' | 'ok' | 'fail'>('idle');
   return (
     <div className="cmd">
@@ -12,8 +12,104 @@ function Cmd({ label, url, open = true }: { label: string; url: string; open?: b
       <button type="button" onClick={async () => { setState((await copyText(url)) ? 'ok' : 'fail'); setTimeout(() => setState('idle'), 1600); }}>
         {state === 'ok' ? 'copied' : state === 'fail' ? 'copy failed' : 'copy'}
       </button>
-      {open && <a href={url} target="_blank" rel="noopener noreferrer">open ↗</a>}
+      <a href={url} target="_blank" rel="noopener noreferrer">open ↗</a>
     </div>
+  );
+}
+
+/** The email stays out of the page until a visitor asks for it, which keeps scrapers away. */
+function MailCmd() {
+  const [email, setEmail] = useState('');
+  const [state, setState] = useState<'idle' | 'ok' | 'fail'>('idle');
+  return (
+    <div className="cmd">
+      <code><b>$</b> mail {email || <span className="masked">•••••••••••@gmail.com</span>}</code>
+      {!email && <button type="button" onClick={() => setEmail(getEmail())}>show</button>}
+      <button type="button" onClick={async () => { setState((await copyText(getEmail())) ? 'ok' : 'fail'); setTimeout(() => setState('idle'), 1600); }}>
+        {state === 'ok' ? 'copied' : state === 'fail' ? 'copy failed' : 'copy'}
+      </button>
+    </div>
+  );
+}
+
+type Status = 'idle' | 'sending' | 'sent' | 'error';
+
+/**
+ * Contact form. With SITE.formKey set it posts to Web3Forms, which emails the message
+ * without exposing the address. Without a key it opens the visitor's mail app instead.
+ * The hidden "botcheck" box is a honeypot: people never see it, bots tick it.
+ */
+function ContactForm() {
+  const [status, setStatus] = useState<Status>('idle');
+  const [error, setError] = useState('');
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+    if (data.get('botcheck')) return; // a bot filled the honeypot
+    const name = String(data.get('name') ?? '').trim();
+    const from = String(data.get('email') ?? '').trim();
+    const message = String(data.get('message') ?? '').trim();
+
+    if (!SITE.formKey) {
+      const subject = encodeURIComponent(`Hello from ${name} (via your portfolio)`);
+      const body = encodeURIComponent(`${message}\n\n${name}${from ? ` · ${from}` : ''}`);
+      window.location.href = `mailto:${getEmail()}?subject=${subject}&body=${body}`;
+      setStatus('sent');
+      return;
+    }
+
+    setStatus('sending');
+    setError('');
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ access_key: SITE.formKey, subject: `Portfolio message from ${name}`, from_name: name, name, email: from, message }),
+      });
+      const json = (await res.json()) as { success?: boolean; message?: string };
+      if (!res.ok || !json.success) throw new Error(json.message || 'Something went wrong');
+      setStatus('sent');
+      form.reset();
+    } catch (err) {
+      setStatus('error');
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    }
+  };
+
+  if (status === 'sent') {
+    return (
+      <div className="cform sent" role="status">
+        <p className="cf-done">✓ {SITE.formKey ? 'Message sent. I’ll get back to you soon.' : 'Your mail app should be open with the message ready to send.'}</p>
+        <button type="button" className="btn" onClick={() => setStatus('idle')}>Write another</button>
+      </div>
+    );
+  }
+
+  return (
+    <form className="cform" onSubmit={onSubmit} noValidate={false}>
+      <p className="cf-k">$ write --to dilshad</p>
+      <div className="cf-row">
+        <label>
+          <span>name</span>
+          <input name="name" required maxLength={80} autoComplete="name" placeholder="Your name" />
+        </label>
+        <label>
+          <span>email</span>
+          <input name="email" type="email" required maxLength={120} autoComplete="email" placeholder="you@company.com" />
+        </label>
+      </div>
+      <label>
+        <span>message</span>
+        <textarea name="message" required minLength={10} maxLength={3000} rows={4} placeholder="A role, a project, or just hello" />
+      </label>
+      <input type="checkbox" name="botcheck" className="cf-hp" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+      <div className="cf-foot">
+        <button type="submit" className="btn primary" disabled={status === 'sending'}>{status === 'sending' ? 'Sending…' : 'Send message →'}</button>
+        {status === 'error' && <p className="cf-err" role="alert">Couldn’t send: {error}. Try again, or use the email above.</p>}
+      </div>
+    </form>
   );
 }
 
@@ -31,8 +127,9 @@ export function Contact() {
             <Cmd label="open linkedin.com/in/alamdilshad87" url={SITE.linkedin} />
             <Cmd label="open github.com/alamdilshad87" url={SITE.github} />
             <Cmd label="open behance.net/alamdilshad87" url={SITE.behance} />
-            {SITE.email && <Cmd label={`mail ${SITE.email}`} url={SITE.email} open={false} />}
+            {SITE.emailEnc && <MailCmd />}
           </div>
+          <ContactForm />
           <div className="dls">
             {SITE.resume && <Magnetic><a className="btn primary" href={asset(SITE.resume)} download>Résumé · tech ↓</a></Magnetic>}
             {SITE.portfolio && <Magnetic><a className="btn" href={asset(SITE.portfolio)} download>Design portfolio ↓</a></Magnetic>}

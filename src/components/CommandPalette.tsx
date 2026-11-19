@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PROJECTS } from '../data/projects';
-import { asset, SECTIONS, SITE } from '../data/site';
+import { asset, getEmail, SECTIONS, SITE } from '../data/site';
 import { SKILLS } from '../data/skills';
 import { copyText, emit, scrollToId, useBus } from '../lib/hooks';
 
@@ -25,7 +25,7 @@ export function CommandPalette() {
     ];
     if (SITE.resume) all.push({ id: 'd-cv', group: 'Downloads', label: 'Download résumé', hint: 'tech side · PDF', run: () => window.open(asset(SITE.resume), '_blank', 'noopener') });
     if (SITE.portfolio) all.push({ id: 'd-pf', group: 'Downloads', label: 'Download design portfolio', hint: 'creative side · PDF', run: () => window.open(asset(SITE.portfolio), '_blank', 'noopener') });
-    if (SITE.email) all.push({ id: 'a-mail', group: 'Actions', label: 'Copy email address', hint: SITE.email, run: () => void copyText(SITE.email) });
+    if (SITE.emailEnc) all.push({ id: 'a-mail', group: 'Actions', label: 'Copy email address', hint: 'to clipboard', run: () => void copyText(getEmail()) });
     return all;
   }, []);
 
