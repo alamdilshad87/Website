@@ -620,9 +620,10 @@ dialog::backdrop { background: rgb(5 6 12 / .72); backdrop-filter: blur(6px); }
 /* ============================================================
    Contact
    ============================================================ */
-.contact { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(30px, 5vw, 72px); align-items: center; }
-@media (max-width: 900px) { .contact { grid-template-columns: minmax(0, 1fr); } }
-.contact .big { margin: 0 0 26px; font: 800 clamp(2.8rem, 8vw, 6.6rem)/1 var(--f-display); font-variation-settings: "wdth" 88; letter-spacing: -.02em; text-transform: uppercase; }
+.contact { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); grid-template-areas: "main badge" "form form"; gap: clamp(40px, 5vw, 64px) clamp(30px, 5vw, 72px); align-items: center; }
+.c-main { grid-area: main; } .c-form { grid-area: form; } .contact .lan { grid-area: badge; }
+@media (max-width: 900px) { .contact { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main" "form" "badge"; } }
+.contact .big { margin: 0 0 26px; font: 800 clamp(2.8rem, 5.6vw, 5.4rem)/1 var(--f-display); font-variation-settings: "wdth" 88; letter-spacing: -.02em; text-transform: uppercase; }
 .contact .big em { font: italic 400 1.08em/1 var(--f-serif); text-transform: none; letter-spacing: 0; }
 .contact p { max-width: 52ch; margin: 0 0 30px; font-size: 1.08rem; line-height: 1.7; }
 .cmds { display: grid; gap: 12px; max-width: 640px; }
@@ -730,7 +731,7 @@ dialog::backdrop { background: rgb(5 6 12 / .72); backdrop-filter: blur(6px); }
 
 /* contact form */
 .cmd .masked { letter-spacing: .04em; opacity: .7; }
-.cform { display: grid; gap: 12px; max-width: 640px; margin-top: 26px; padding: 20px; border: 2px solid var(--c-ink); border-radius: 22px; background: var(--panel); box-shadow: 5px 5px 0 var(--c-ink); }
+.cform { position: relative; display: grid; gap: 12px; padding: 20px; border: 2px solid var(--c-ink); border-radius: 22px; background: var(--panel); box-shadow: 5px 5px 0 var(--c-ink); }
 .cf-k { margin: 0; font: 500 .8rem var(--f-mono); }
 .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 560px) { .cf-row { grid-template-columns: 1fr; } }
@@ -744,3 +745,11 @@ dialog::backdrop { background: rgb(5 6 12 / .72); backdrop-filter: blur(6px); }
 .cf-err { margin: 0; font: 500 .82rem var(--f-mono); }
 .cform.sent { justify-items: start; }
 .cf-done { margin: 0; font: 600 1rem var(--f-body); }
+
+/* contact form as a wide card on desktop: fields left, message right */
+@media (min-width: 901px) {
+  .cform:not(.sent) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); grid-template-areas: "k k" "row msg" "foot foot"; column-gap: 18px; padding: 26px 28px; }
+  .cf-k { grid-area: k; } .cform .cf-row { grid-area: row; grid-template-columns: 1fr; align-content: start; }
+  .cf-msg { grid-area: msg; grid-template-rows: auto 1fr; } .cf-msg textarea { height: 100%; min-height: 150px; }
+  .cf-foot { grid-area: foot; }
+}

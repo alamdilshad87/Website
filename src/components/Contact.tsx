@@ -100,9 +100,9 @@ function ContactForm() {
           <input name="email" type="email" required maxLength={120} autoComplete="email" placeholder="you@company.com" />
         </label>
       </div>
-      <label>
+      <label className="cf-msg">
         <span>message</span>
-        <textarea name="message" required minLength={10} maxLength={3000} rows={4} placeholder="A role, a project, or just hello" />
+        <textarea name="message" required minLength={10} maxLength={3000} rows={5} placeholder="A role, a project, or just hello" />
       </label>
       <input type="checkbox" name="botcheck" className="cf-hp" tabIndex={-1} autoComplete="off" aria-hidden="true" />
       <div className="cf-foot">
@@ -119,7 +119,7 @@ export function Contact() {
   return (
     <section id="contact" className="sec blk-orange">
       <div className="wrap contact">
-        <div>
+        <div className="c-main">
           <span className="eyebrow">contact.sh</span>
           <h2 className="big">Let’s make something <em>loud</em></h2>
           <p>Hiring for backend, full-stack or AI/ML work? Need a visual identity or event graphics? I’m open to roles in India and abroad, and happy to start with a short call.</p>
@@ -129,12 +129,13 @@ export function Contact() {
             <Cmd label="open behance.net/alamdilshad87" url={SITE.behance} />
             {SITE.emailEnc && <MailCmd />}
           </div>
-          <ContactForm />
           <div className="dls">
             {SITE.resume && <Magnetic><a className="btn primary" href={asset(SITE.resume)} download>Résumé · tech ↓</a></Magnetic>}
             {SITE.portfolio && <Magnetic><a className="btn" href={asset(SITE.portfolio)} download>Design portfolio ↓</a></Magnetic>}
           </div>
         </div>
+
+        <div className="c-form"><ContactForm /></div>
 
         <div className="lan" aria-hidden="true"
           onPointerMove={(e) => { if (reduced) return; const r = e.currentTarget.getBoundingClientRect(); rot.set(((e.clientX - r.left) / r.width - 0.5) * 16); }}
