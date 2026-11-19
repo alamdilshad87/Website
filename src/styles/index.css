@@ -776,3 +776,9 @@ dialog::backdrop { background: rgb(5 6 12 / .72); backdrop-filter: blur(6px); }
   .cmd button, .cmd a { padding: 6px 10px; font-size: .68rem; }
   .portrait .ast { right: 4px; top: -22px; }
 }
+
+/* design reel: sideways swipe and drag (DesignReel.tsx) */
+.hsticky { touch-action: pan-y; cursor: grab; }
+.hsticky.dragging { cursor: grabbing; user-select: none; }
+.hsticky.dragging .hslide { pointer-events: none; }
+.hsticky img { -webkit-user-drag: none; user-select: none; }
