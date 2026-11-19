@@ -16,16 +16,16 @@ export interface Role {
 
 export const ROLES: Role[] = [
   { id: 'r1', lane: 'eng', org: 'BridgeLabZ', role: '.NET Developer with Angular', s: '2025-10', e: '2026-01',
-    note: 'Four-month internship and training. Built the Fundoo Notes API and Angular frontend, plus Employee Payroll, Address Book, India State Census Analyzer and Bookstore exercises.' },
-  { id: 'r2', lane: 'aar', org: 'AARUUSH', role: 'Volunteer', s: '2022-10', e: '2023-09', note: 'Joined the SRMIST techno-management fest team as a volunteer.' },
-  { id: 'r3', lane: 'aar', org: 'AARUUSH', role: 'Committee Member, Creatives and Highlights', s: '2023-09', e: '2024-10', note: 'Posters, social creatives and highlight content for the fest.' },
+    note: 'Four-month internship and training. Built the Fundoo Notes API and its Angular frontend, alongside smaller .NET exercises in payroll, data parsing and testing.' },
+  { id: 'r2', lane: 'aar', org: 'AARUUSH', role: 'Volunteer', s: '2022-10', e: '2023-09', note: 'Started on the ground team of SRMIST’s national techno-management fest.' },
+  { id: 'r3', lane: 'aar', org: 'AARUUSH', role: 'Committee Member, Creatives and Highlights', s: '2023-09', e: '2024-10', note: 'Designed posters, social creatives and highlight content for the fest.' },
   { id: 'r4', lane: 'aar', org: 'AARUUSH', role: 'Head of Creatives', s: '2024-09', e: '2025-09', note: 'Ran the creatives team and mentored 100+ members.',
     photo: { base: 'photos/team-aaruush', caption: 'Team AARUUSH, main stage' } },
   { id: 'r5', lane: 'aar', org: 'AARUUSH', role: 'Organiser', s: '2025-04', e: '2026-04', note: 'Mentored 250+ members across the organising team.',
     photo: { base: 'photos/aaruush-organiser', caption: 'AARUUSH ’25' } },
-  { id: 'r6', lane: 'srk', org: 'SRMKZILLA', role: 'Editorial (GFX) Member', s: '2023-09', e: '2024-10', note: 'Graphics and editorial work for the club.' },
-  { id: 'r7', lane: 'srk', org: 'SRMKZILLA', role: 'Editorial Lead', s: '2024-10', e: '2025-09', note: 'Led the editorial and graphics team.' },
-  { id: 'r8', lane: 'srk', org: 'SRMKZILLA', role: 'Mentor', s: '2025-09', e: 'now', note: 'Creative and editorial guidance, with a focus on design consistency.' },
+  { id: 'r6', lane: 'srk', org: 'SRMKZILLA', role: 'Editorial (GFX) Member', s: '2023-09', e: '2024-10', note: 'Designed graphics and editorial posts for SRMIST’s open-source community.' },
+  { id: 'r7', lane: 'srk', org: 'SRMKZILLA', role: 'Editorial Lead', s: '2024-10', e: '2025-09', note: 'Led the editorial and graphics team, from briefs to final posts.' },
+  { id: 'r8', lane: 'srk', org: 'SRMKZILLA', role: 'Mentor', s: '2025-09', e: 'now', note: 'Guiding the next editorial team, with a focus on consistent design.' },
   { id: 'r9', lane: 'edu', org: 'SRMIST Kattankulathur', role: 'B.Tech, Computer Science and Engineering', s: '2022-06', e: '2026-05',
     note: 'Graduated in 2026 with a CGPA of 8.99.', photo: { base: 'photos/graduation', caption: 'Convocation, SRMIST' } },
 ];

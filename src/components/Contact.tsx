@@ -26,7 +26,7 @@ export function Contact() {
         <div>
           <span className="eyebrow">contact.sh</span>
           <h2 className="big">Let’s make something <em>loud</em></h2>
-          <p>Hiring for backend, full-stack, AI/ML, data or cloud work? Need a visual identity or event graphics? I’m open to roles in India and abroad and happy to start with a short call.</p>
+          <p>Hiring for backend, full-stack or AI/ML work? Need a visual identity or event graphics? I’m open to roles in India and abroad, and happy to start with a short call.</p>
           <div className="cmds">
             <Cmd label="open linkedin.com/in/alamdilshad87" url={SITE.linkedin} />
             <Cmd label="open github.com/alamdilshad87" url={SITE.github} />

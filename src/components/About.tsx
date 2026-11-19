@@ -9,15 +9,15 @@ type Mode = 'dev' | 'des';
 
 const COPY: Record<Mode, { lead: string; sub: string; tags: string[]; photo: string; widths?: number[]; alt: string; s1: string; s2: string }> = {
   dev: {
-    lead: 'I build .NET services, Angular frontends and retrieval-based AI, and I like being able to explain a system end to end, from the token on the request to the index behind the answer.',
-    sub: 'Four months of .NET and Angular training at BridgeLabZ led into SpecGuard, an API analysis platform, and an assistant that answers questions from your own documents on a small local model with no cloud calls.',
+    lead: 'I build .NET services, Angular frontends and retrieval-based AI, and I can walk you through a system end to end: from the token on the request to the index behind the answer.',
+    sub: 'At BridgeLabZ I spent four months shipping .NET and Angular. On my own time I built SpecGuard, an API analysis platform, and a support assistant that answers from your documents on a small local model, with no cloud calls.',
     tags: ['ASP.NET Core', 'Angular', 'FastAPI', 'PostgreSQL', 'RAG', 'Docker'],
     photo: 'photos/dev-laptop', alt: 'Md Dilshad Alam working on a laptop outdoors',
     s1: 'git push --force-with-care', s2: 'SRMIST · class of 2026',
   },
   des: {
     lead: 'I design for AARUUSH, SRMIST’s national-level techno-management fest: posters, banners, standees, Instagram stories, merch, ID cards and tickets that share one identity.',
-    sub: 'Fourteen chapters of work from 2023 to 2025, built in Photoshop and Illustrator. I started as a volunteer, ran the creatives team, and now mentor the next group.',
+    sub: 'Fourteen chapters of work from 2023 to 2025, made in Photoshop and Illustrator. I joined as a volunteer, went on to head the creatives team, and now mentor the people who run it.',
     tags: ['Visual identity', 'Event branding', 'Social media', 'Merchandise'],
     photo: 'design/dilshad', widths: [360, 720], alt: 'Md Dilshad Alam smiling with arms crossed in front of an orange sun mural',
     s1: 'Photoshop · Illustrator', s2: 'AARUUSH creatives',
@@ -62,7 +62,7 @@ export function About() {
             ))}
           </div>
           <span className="eyebrow">about/</span>
-          <h2 className="h2">I turn ideas into <em>experiences</em>, in code and in colour.</h2>
+          <h2 className="h2">I build the system <em>and</em> the poster for its launch.</h2>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={mode}

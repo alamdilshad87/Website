@@ -46,7 +46,7 @@ export default function App() {
       <main>
         <Hero />
         <Stickers
-          a={['Design with purpose', 'Building ideas, designing experiences', 'Full-stack', 'RAG', 'Event branding']}
+          a={['I make it work', 'I make it beautiful', 'Full-stack', 'Offline AI', 'Event branding']}
           b={['.NET', 'Angular', 'Python', 'FastAPI', 'Photoshop', 'Illustrator', 'Figma', 'Docker', 'Posters', 'Merch']}
         />
         <About />

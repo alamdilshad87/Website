@@ -28,7 +28,7 @@ const GH = 'https://github.com/alamdilshad87';
 export const PROJECTS: Project[] = [
   {
     id: 'specguard', title: 'SpecGuard', cats: ['web', 'ai'], tag: 'backend · ai', kind: 'API analysis platform', featured: true, color: 'peri',
-    desc: 'Reads OpenAPI specs and source code, then generates documentation, examples and test cases. Compares API versions to flag breaking changes in endpoints, request schemas and response contracts, and answers questions through a RAG assistant.',
+    desc: 'APIs change, and clients break without warning. SpecGuard reads an OpenAPI spec alongside the source code and turns it into documentation, tests and a clear list of what changed between versions.',
     highlights: [
       'Diffs two API versions and flags breaking changes in endpoints, request schemas and response contracts',
       'Generates documentation, request examples and test cases from the spec and the code',
@@ -38,32 +38,32 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'selfhosted', title: 'Self-Hosted AI Support System', cats: ['ai', 'web'], tag: 'ai/ml · backend', kind: 'runs offline', featured: true, color: 'teal',
-    desc: 'Document Q&A with no cloud calls. Hierarchical chunking, a FAISS semantic index, and Llama-3.2-1B running locally through llama.cpp with quantization and GPU acceleration. Packaged in Docker and covered by 40+ API test cases at an 85% pass rate.',
+    desc: 'A support assistant for teams that can’t send their documents to the cloud. It answers questions from internal docs with a small language model that runs entirely on local hardware.',
     highlights: [
       'Hierarchical chunking feeding a FAISS semantic index',
       'Llama-3.2-1B served locally through llama.cpp, quantized and GPU-accelerated',
-      'Shipped in Docker, with 40+ API test cases at an 85% pass rate',
+      'Packaged in Docker and covered by 40+ API test cases',
     ],
     stack: ['Python', 'FastAPI', 'FAISS', 'llama.cpp', 'Docker'], art: 'flow', cover: 'projects/selfhosted.svg', repo: GH,
   },
   {
     id: 'fundoo', title: 'Fundoo Notes', cats: ['web'], tag: 'full-stack', kind: 'BridgeLabZ', color: 'paper',
-    desc: 'Notes app with a REST API secured by JWT, with Redis, NLog, NUnit tests and Swagger docs. The Angular frontend covers CRUD, reminders, labels and collaborators.',
+    desc: 'A Keep-style notes app built during BridgeLabZ training. The ASP.NET Core API handles auth with JWT, caching with Redis and logging with NLog, with NUnit tests and Swagger docs. The Angular frontend covers notes, reminders, labels and collaborators.',
     stack: ['ASP.NET Core', 'Angular', 'JWT', 'Redis', 'NUnit'], art: 'notes', repo: GH,
   },
   {
     id: 'jobmatrix', title: 'JobMatrix', cats: ['ai'], tag: 'ai/ml', kind: 'NLP matching', color: 'orange',
-    desc: 'Extracts text from PDF and DOCX resumes and job descriptions, scores them with TF-IDF and cosine similarity, then ranks the top 5 candidates for shortlisting.',
+    desc: 'Reads PDF and DOCX résumés, scores each one against a job description with TF-IDF and cosine similarity, and ranks the top five candidates for a shortlist.',
     stack: ['Python', 'Flask', 'scikit-learn', 'Pandas'], art: 'bars', repo: GH,
   },
   {
     id: 'iot', title: 'IoT Train Track Switcher', cats: ['hw'], tag: 'hardware', kind: 'IoT', color: 'violet',
-    desc: 'Servo-driven track switching controlled from an ESP32, with state reported through ThingSpeak.',
+    desc: 'A prototype that switches railway tracks with servo motors driven by an ESP32, and reports every switch’s position to a live ThingSpeak dashboard.',
     stack: ['ESP32', 'Servo', 'ThingSpeak'], art: 'rails', repo: GH,
   },
   {
     id: 'health', title: 'Healthcare Chatbot', cats: ['ai'], tag: 'ai/ml', kind: 'NLP + classification', color: 'peri',
-    desc: 'Symptom assessment and disease prediction chatbot built around a decision-tree classifier trained on symptom datasets.',
+    desc: 'A chatbot that asks about your symptoms and suggests likely conditions, using a decision-tree classifier trained on symptom datasets.',
     stack: ['Python', 'scikit-learn', 'spaCy', 'Pandas'], art: 'ecg', repo: GH,
   },
 ];

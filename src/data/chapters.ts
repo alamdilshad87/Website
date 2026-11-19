@@ -39,7 +39,7 @@ const raw: Omit<Chapter, 'n'>[] = [
     d: 'The SRM Run eco-run tee and AARUUSH organiser and committee tees, with personalised details and close-up print placement.' },
   { t: 'Bag Tags + Placards', sub: 'Small things, sharp details', cat: 'merch', yr: '2022 to 2025', img: ['bag-tags-placards'],
     d: 'Lanyard-style bag tags for AARUUSH events, and table placards for summits and Model UN committees.' },
-  { t: 'ID Cards', sub: 'Credentials that create experience', cat: 'merch', yr: '2024', img: ['id-cards'],
+  { t: 'ID Cards', sub: 'One identity, every team', cat: 'merch', yr: '2024', img: ['id-cards'],
     d: 'Event ID cards for AARUUSH ’24 that share one identity across teams, with role-specific graphics and fields that stay functional.' },
   { t: 'Tickets', sub: 'More than access', cat: 'merch', yr: '2023 to 2025', img: ['tickets'],
     d: 'Registration tickets that carry practical information and the event’s personality, with clear fields and a strong hierarchy.' },
