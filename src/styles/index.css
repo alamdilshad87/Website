@@ -330,7 +330,7 @@ html.has-cursor input, html.has-cursor textarea { cursor: text; }
 .xr-hint { margin: 0; font: 400 .7rem var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: #8A9AD8; }
 .xr-hint .touch { display: none; }
 .xr.flipped .xr-hint { color: #6A665D; }
-@media (max-width: 1180px) { .xr-code .xr-star { right: 0; top: -12%; } }
+@media (max-width: 1180px) { .xr-code .xr-star { right: 0; top: auto; bottom: -30px; } }
 @media (hover: none) { .xr { cursor: auto; } .xr-hint .fine { display: none; } .xr-hint .touch { display: inline; } }
 @media (max-width: 860px) {
   .xr, .xr[data-zoom] { --r: 80px; }
