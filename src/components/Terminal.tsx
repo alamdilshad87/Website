@@ -30,14 +30,14 @@ function Run({ c, ctx, children }: { c: string; ctx: Ctx; children?: ReactNode }
 
 const COMMANDS = [
   'help', 'hi', 'hello', 'about', 'whoami', 'neofetch', 'projects', 'open', 'experience', 'git log', 'education', 'skills', 'tree',
-  'certs', 'resume', 'contact', 'hire', 'copy email', 'goto', 'ls', 'theme', 'clear', 'coffee', 'joke', 'fortune', 'cowsay',
+  'certs', 'resume', 'portfolio', 'contact', 'hire', 'copy email', 'goto', 'ls', 'theme', 'clear', 'coffee', 'joke', 'fortune', 'cowsay',
   'matrix', 'weather', 'ping', 'date', 'echo', 'exit', 'sudo hire-me',
 ];
 
 const HELP: [string, [string, string][]][] = [
   ['basics', [['help', 'this list'], ['about', 'who I am'], ['contact', 'ways to reach me'], ['hire', 'send me a message, right here'], ['clear', 'clear the screen']]],
   ['portfolio', [['neofetch', 'the system card'], ['projects [--ai|--web|--hw]', 'what I’ve built'], ['open <name>', 'a project, or github · linkedin · behance'],
-    ['experience', 'roles, as a git log'], ['education', 'degree and grades'], ['skills · tree', 'the toolbox'], ['certs', 'certifications'], ['goto <section>', 'jump around the page']]],
+    ['experience', 'roles, as a git log'], ['education', 'degree and grades'], ['skills · tree', 'the toolbox'], ['certs', 'certifications'], ['resume · portfolio', 'download the PDFs'], ['goto <section>', 'jump around the page']]],
   ['fun', [['hi', 'say hello'], ['coffee · joke · fortune', 'breaks'], ['cowsay <text>', 'moo'], ['matrix', 'follow the white rabbit'], ['weather', 'Chennai, live-ish'], ['…', 'and a few secrets']]],
 ];
 
@@ -171,7 +171,7 @@ function run(raw: string, ctx: Ctx): Result {
     }
 
     case 'projects': case 'ls': {
-      if (cmd === 'ls' && !arg) return { out: [o(<>{SECTIONS.map((s) => <Run key={s.id} c={`goto ${s.id}`} ctx={ctx}>{s.id}/</Run>)} <i>resume.pdf</i></>)] };
+      if (cmd === 'ls' && !arg) return { out: [o(<>{SECTIONS.map((s) => <Run key={s.id} c={`goto ${s.id}`} ctx={ctx}>{s.id}/</Run>)} <Run c="resume" ctx={ctx}>resume.pdf</Run> <Run c="portfolio" ctx={ctx}>portfolio.pdf</Run></>)] };
       const f = /--?(ai|web|hw)/.exec(arg)?.[1] as 'ai' | 'web' | 'hw' | undefined;
       const list = f ? PROJECTS.filter((p) => p.cats.includes(f)) : PROJECTS;
       return {
@@ -187,6 +187,7 @@ function run(raw: string, ctx: Ctx): Result {
       for (const c of SITE.coding) links[c.label.toLowerCase()] = c.href;
       if (links[arg]) { window.open(links[arg], '_blank', 'noopener'); return { out: [ok(`opening ${arg} ↗`)] }; }
       if (arg === 'resume' || arg === 'resume.pdf') return run('resume', ctx);
+      if (arg === 'portfolio' || arg === 'portfolio.pdf') return run('portfolio', ctx);
       const p = arg && findProject(arg);
       if (p) { scrollToId('projects'); setTimeout(() => emit('open-project', p.id), 450); return { out: [ok(`opening ${p.title} case study…`)] }; }
       return { out: [er(`usage: open <project> | github | linkedin | behance | leetcode`)] };
@@ -208,8 +209,12 @@ function run(raw: string, ctx: Ctx): Result {
       return { out: [...SITE.certs.map((c) => o(<>✓ {c}</>)), o(<>more on <a href={SITE.credly} target="_blank" rel="noopener noreferrer">Credly ↗</a></>)] };
 
     case 'resume': case 'cv':
-      if (SITE.resume) { window.open(asset(SITE.resume), '_blank', 'noopener'); return { out: [ok('opening résumé ↗')] }; }
+      if (SITE.resume) { window.open(asset(SITE.resume), '_blank', 'noopener'); return { out: [ok('opening the résumé (tech side) ↗')], }; }
       return { out: [o('The résumé is getting a fresh coat of paint.'), o(<>Meanwhile: <Run c="neofetch" ctx={ctx} /> or <Run c="hire" ctx={ctx} />.</>)] };
+
+    case 'portfolio': case 'design':
+      if (SITE.portfolio) { window.open(asset(SITE.portfolio), '_blank', 'noopener'); return { out: [ok('opening the design portfolio (creative side) ↗')] }; }
+      return { out: [o('The design portfolio is on its way.')] };
 
     case 'contact':
       return {

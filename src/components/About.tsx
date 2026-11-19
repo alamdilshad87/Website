@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { CHAPTERS } from '../data/chapters';
 import { PROJECTS } from '../data/projects';
+import { asset, SITE } from '../data/site';
 import { useReduced } from '../lib/hooks';
 import { Pic } from './ui';
 
@@ -74,6 +75,11 @@ export function About() {
               <p className="lead">{c.lead}</p>
               <p className="sub">{c.sub}</p>
               <div className="tags">{c.tags.map((t) => <span key={t}>{t}</span>)}</div>
+              {(mode === 'dev' ? SITE.resume : SITE.portfolio) && (
+                <a className="btn about-dl" href={asset(mode === 'dev' ? SITE.resume : SITE.portfolio)} download>
+                  {mode === 'dev' ? 'Download résumé ↓' : 'Download design portfolio ↓'}
+                </a>
+              )}
             </motion.div>
           </AnimatePresence>
           <ul className="facts" aria-label="Quick facts">

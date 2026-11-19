@@ -33,9 +33,10 @@ export function Contact() {
             <Cmd label="open behance.net/alamdilshad87" url={SITE.behance} />
             {SITE.email && <Cmd label={`mail ${SITE.email}`} url={SITE.email} open={false} />}
           </div>
-          {SITE.resume && (
-            <p style={{ marginTop: 22 }}><Magnetic><a className="btn primary" href={asset(SITE.resume)} download>Download résumé ↓</a></Magnetic></p>
-          )}
+          <div className="dls">
+            {SITE.resume && <Magnetic><a className="btn primary" href={asset(SITE.resume)} download>Résumé · tech ↓</a></Magnetic>}
+            {SITE.portfolio && <Magnetic><a className="btn" href={asset(SITE.portfolio)} download>Design portfolio ↓</a></Magnetic>}
+          </div>
         </div>
 
         <div className="lan" aria-hidden="true"
