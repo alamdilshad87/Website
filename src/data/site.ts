@@ -15,7 +15,7 @@ export const SITE = {
    * Web3Forms access key for the contact form (web3forms.com, free). It is safe to
    * publish. Empty: the form falls back to opening the visitor's mail app.
    */
-  formKey: '',
+  formKey: 'a72cac77-2e89-48ed-93be-441b7f5d40be',
   /** Résumé PDF in /public, for tech visitors. Empty hides the buttons. */
   resume: 'Md_Dilshad_Alam_Resume.pdf',
   /** Design portfolio PDF in /public, for creative visitors. Empty hides the buttons. */
