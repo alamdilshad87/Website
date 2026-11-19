@@ -231,6 +231,77 @@ html.has-cursor input, html.has-cursor textarea { cursor: text; }
 @media (max-width: 640px) { .vs-land { height: 46%; } .vs-copy { padding-top: 120px; } }
 
 /* ============================================================
+   Hero: x-ray lens (components/HeroXray.tsx)
+   Two identical layouts; the code layer is masked to a circle at --x/--y.
+   ============================================================ */
+@property --r { syntax: '<length>'; inherits: true; initial-value: 150px; }
+.xr { --x: 60%; --y: 45%; --r: 150px; position: relative; min-height: 100svh; overflow: clip; isolation: isolate; cursor: none; transition: --r .7s cubic-bezier(.7, 0, .2, 1); }
+.xr.flipped { --r: 160vmax; }
+.xr-layer { position: absolute; inset: 0; }
+.xr-in { width: min(1240px, 100%); height: 100%; margin: 0 auto; padding: 120px 16px 120px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); align-items: center; gap: 40px; }
+.xr-copy { position: relative; }
+.xr-k { margin: 0 0 22px; font: 500 .78rem var(--f-mono); letter-spacing: .04em; }
+.xr-h { margin: 0 0 26px; font: 800 clamp(3.4rem, 9vw, 8.6rem)/.88 var(--f-display); font-variation-settings: 'wdth' 80; letter-spacing: -.045em; }
+.xr-h em { font-style: normal; }
+.xr-p { margin: 0; max-width: 44ch; font-size: 1.05rem; line-height: 1.6; }
+.xr-art { position: relative; justify-self: center; width: min(400px, 100%); aspect-ratio: .8; }
+.xr-blob { position: absolute; inset: 6% -4% -2% 4%; border-radius: 999px 999px 28px 28px; }
+.xr-ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 999px 999px 24px 24px; }
+.xr-s { position: absolute; padding: 8px 14px; border-radius: 999px; font: 600 .85rem var(--f-mono); white-space: nowrap; }
+.xr-s.s1 { top: 10%; left: -14%; rotate: -8deg; } .xr-s.s2 { top: 48%; right: -12%; rotate: 6deg; } .xr-s.s3 { bottom: 6%; left: -8%; rotate: 4deg; }
+.xr-star { position: absolute; top: -6%; right: 2%; }
+
+/* designer layer */
+.xr-design { background: radial-gradient(circle at 80% 20%, #FFD9C2, transparent 45%), #F4EEE3; color: #15161C; }
+.xr-design .xr-k { color: #6A665D; }
+.xr-design .xr-h em { font: italic 400 1.08em/.8 var(--f-serif); letter-spacing: -.02em; color: #FF5A1F; }
+.xr-design .xr-p { color: #3A3934; }
+.xr-design .xr-blob { background: #9AA8FF; rotate: 5deg; }
+.xr-design .xr-s { border: 2px solid #15161C; box-shadow: 3px 3px 0 #15161C; color: #15161C; }
+.xr-design .s1 { background: #FF5A1F; } .xr-design .s2 { background: #1DE9A6; } .xr-design .s3 { background: #FFD25E; }
+.xr-design .xr-star { font-size: 4.5rem; line-height: 1; color: #FF5A1F; animation: spin 18s linear infinite; }
+
+/* developer layer */
+.xr-code { color: #DCE6FF; background: linear-gradient(#ffffff12 1px, transparent 1px) 0 0 / 32px 32px, linear-gradient(90deg, #ffffff12 1px, transparent 1px) 0 0 / 32px 32px, #0F1E63;
+  -webkit-mask: radial-gradient(circle var(--r) at var(--x) var(--y), #000 98%, transparent 100%); mask: radial-gradient(circle var(--r) at var(--x) var(--y), #000 98%, transparent 100%); }
+.xr-code .xr-k { color: #7FF3C9; }
+.xr-code .xr-h { color: transparent; -webkit-text-stroke: 1.5px #DCE6FF; outline: 1px dashed #7FA0FF; outline-offset: 6px; }
+.xr-code .xr-h em { -webkit-text-stroke: 1.5px #FFB020; }
+.xr-code .xr-p { font: 400 .92rem/1.7 var(--f-mono); }
+.xr-code .kw { color: #FF8FB0; } .xr-code .st { color: #7FF3C9; } .xr-code .cm { color: #8A9AD8; }
+.xr-dim { position: absolute; left: 0; top: -36px; font: 400 .7rem var(--f-mono); color: #FFB020; }
+.xr-code .xr-blob { border: 1.5px dashed #7FA0FF; rotate: 5deg; }
+.xr-code .xr-ph { filter: grayscale(1) contrast(1.4) brightness(.9); mix-blend-mode: screen; opacity: .55; outline: 1.5px solid #FFB020; outline-offset: 4px; }
+.xr-box { position: absolute; top: -30px; left: 0; padding: 3px 8px; background: #FFB020; color: #0F1E63; font: 500 .7rem var(--f-mono); border-radius: 3px; }
+.xr-code .xr-s { border: 1.5px dashed #7FF3C9; color: #7FF3C9; background: #0F1E63; }
+.xr-code .xr-star { top: -2%; right: -18%; font: 400 .78rem var(--f-mono); color: #8A9AD8; }
+
+/* lens + ui */
+.xr-lens { position: absolute; z-index: 5; left: var(--x); top: var(--y); width: calc(var(--r) * 2); height: calc(var(--r) * 2); translate: -50% -50%; border-radius: 50%; pointer-events: none;
+  border: 2px solid #FFB020; box-shadow: 0 0 0 6px rgb(255 176 32 / .15), 0 20px 60px rgb(15 30 99 / .35); }
+.xr-lens::before, .xr-lens::after { content: ''; position: absolute; left: 50%; top: 50%; background: #FFB020; translate: -50% -50%; }
+.xr-lens::before { width: 14px; height: 2px; } .xr-lens::after { width: 2px; height: 14px; }
+.xr-lens span { position: absolute; left: 50%; bottom: -30px; translate: -50% 0; padding: 2px 8px; border-radius: 4px; background: #FFB020; color: #0F1E63; font: 500 .68rem var(--f-mono); white-space: nowrap; }
+.xr.flipped .xr-lens { opacity: 0; }
+.xr-ui { position: absolute; z-index: 6; left: 0; right: 0; bottom: 28px; width: min(1240px, 100%); margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 16px; cursor: auto; }
+.xr-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+.xr .btn { color: #15161C; border-color: #15161C; background: #F4EEE3; }
+.xr .btn.primary { background: #15161C; color: #F4EEE3; }
+.xr .btn:hover { background: #FF5A1F; border-color: #FF5A1F; color: #15161C; }
+.xr-mode { margin-left: auto; display: inline-flex; padding: 4px; border: 2px solid #15161C; border-radius: 999px; background: #F4EEE3; }
+.xr-mode i { padding: 5px 12px; border-radius: 999px; font: 500 .75rem var(--f-mono); font-style: normal; color: #15161C; transition: background .3s, color .3s; }
+.xr-mode i.on { background: #0F1E63; color: #FFB020; }
+.xr-hint { margin: 0; font: 400 .7rem var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: #6A665D; }
+.xr.flipped .xr-hint { color: #8A9AD8; }
+@media (max-width: 860px) {
+  .xr { --r: 110px; cursor: auto; }
+  .xr-in { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 30px; padding-top: 100px; }
+  .xr-art { width: min(260px, 70%); }
+  .xr-hint { display: none; }
+  .xr-ui { bottom: 18px; }
+}
+
+/* ============================================================
    Sticker marquee
    ============================================================ */
 .stickers { position: relative; z-index: 3; height: clamp(110px, 14vw, 170px); overflow-x: clip; }

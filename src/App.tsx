@@ -7,7 +7,7 @@ import { Contact } from './components/Contact';
 import { Cursor } from './components/Cursor';
 import { DesignReel } from './components/DesignReel';
 import { Footer } from './components/Footer';
-import { HeroVista as Hero } from './components/HeroVista';
+import { HeroXray as Hero } from './components/HeroXray';
 import { Journey } from './components/Journey';
 import { Nav } from './components/Nav';
 import { Stack } from './components/Stack';
