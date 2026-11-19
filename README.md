@@ -39,7 +39,7 @@ assets-src/design/       original design slides (source for public/design)
 
 ## Effects
 
-- Hero with an interactive dot grid (cursor push, click ripple) and an edge-to-edge variable-font name.
+- Hero portrait rebuilt live from ~5,000 particles, as ASCII ("code") or print dots ("halftone"); particles flee the cursor, scatter on click and drift apart on scroll.
 - Footer terminal you can type commands into (help, projects, contact, sudo hire-me).
 - Sticker marquees, magnetic buttons, custom cursor with labels, smooth scrolling.
 - Projects as sticky stacking cards, each opening a case-study drawer.
