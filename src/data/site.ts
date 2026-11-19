@@ -6,7 +6,7 @@ export const SITE = {
   city: 'Chennai, IN',
   build: '2026.11',
   /** Public email shown in Contact. Empty string hides the row. */
-  email: 'dilshadand@gmail.com',
+  email: 'alamdilshad87job@gmail.com',
   /** Path or URL of a résumé PDF (e.g. 'resume.pdf' in /public). Empty hides the button. */
   resume: '',
   github: 'https://github.com/alamdilshad87',

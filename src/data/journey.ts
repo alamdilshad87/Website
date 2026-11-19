@@ -16,12 +16,12 @@ export interface Role {
 
 export const ROLES: Role[] = [
   { id: 'r1', lane: 'eng', org: 'BridgeLabZ', role: '.NET Developer with Angular', s: '2025-10', e: '2026-01',
-    note: 'Four-month internship and training. Built the Fundoo Notes API and its Angular frontend, alongside smaller .NET exercises in payroll, data parsing and testing.' },
+    note: 'Built RESTful APIs in ASP.NET Core with a layered architecture, designed and tuned SQL Server schemas, and wired them to Angular frontends, applying OOP and SOLID throughout. Fundoo Notes came out of this.' },
   { id: 'r2', lane: 'aar', org: 'AARUUSH', role: 'Volunteer', s: '2022-10', e: '2023-09', note: 'Started on the ground team of SRMIST’s national techno-management fest.' },
   { id: 'r3', lane: 'aar', org: 'AARUUSH', role: 'Committee Member, Creatives and Highlights', s: '2023-09', e: '2024-10', note: 'Designed posters, social creatives and highlight content for the fest.' },
   { id: 'r4', lane: 'aar', org: 'AARUUSH', role: 'Head of Creatives', s: '2024-09', e: '2025-09', note: 'Ran the creatives team and mentored 100+ members.',
     photo: { base: 'photos/team-aaruush', caption: 'Team AARUUSH, main stage' } },
-  { id: 'r5', lane: 'aar', org: 'AARUUSH', role: 'Organiser', s: '2025-04', e: '2026-04', note: 'Mentored 250+ members across the organising team.',
+  { id: 'r5', lane: 'aar', org: 'AARUUSH', role: 'Organiser, Creatives', s: '2025-04', e: '2026-04', note: 'Led a 250+ member creative team across branding and operations, working with the technical, marketing and operations teams.',
     photo: { base: 'photos/aaruush-organiser', caption: 'AARUUSH ’25' } },
   { id: 'r6', lane: 'srk', org: 'SRMKZILLA', role: 'Editorial (GFX) Member', s: '2023-09', e: '2024-10', note: 'Designed graphics and editorial posts for SRMIST’s open-source community.' },
   { id: 'r7', lane: 'srk', org: 'SRMKZILLA', role: 'Editorial Lead', s: '2024-10', e: '2025-09', note: 'Led the editorial and graphics team, from briefs to final posts.' },

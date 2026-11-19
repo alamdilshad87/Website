@@ -31,8 +31,8 @@ export const PROJECTS: Project[] = [
     desc: 'APIs change, and clients break without warning. SpecGuard reads an OpenAPI spec alongside the source code and turns it into documentation, tests and a clear list of what changed between versions.',
     highlights: [
       'Diffs two API versions and flags breaking changes in endpoints, request schemas and response contracts',
-      'Generates documentation, request examples and test cases from the spec and the code',
-      'RAG assistant answers questions about the API from its own documents',
+      'Generates documentation and request examples, then runs positive, negative and edge-case tests automatically',
+      'RAG assistant gives grounded answers over the source code, the spec and the docs',
     ],
     stack: ['.NET Core', 'FastAPI', 'React', 'PostgreSQL', 'RAG'], art: 'diff', cover: 'projects/specguard.svg', repo: GH,
   },
@@ -42,7 +42,7 @@ export const PROJECTS: Project[] = [
     highlights: [
       'Hierarchical chunking feeding a FAISS semantic index',
       'Llama-3.2-1B served locally through llama.cpp, quantized and GPU-accelerated',
-      'Packaged in Docker and covered by 40+ API test cases',
+      'FastAPI backend in Docker with sub-second query latency, covered by 40+ API test cases with strict hallucination control',
     ],
     stack: ['Python', 'FastAPI', 'FAISS', 'llama.cpp', 'Docker'], art: 'flow', cover: 'projects/selfhosted.svg', repo: GH,
   },
@@ -53,7 +53,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'jobmatrix', title: 'JobMatrix', cats: ['ai'], tag: 'ai/ml', kind: 'NLP matching', color: 'orange',
-    desc: 'Reads PDF and DOCX résumés, scores each one against a job description with TF-IDF and cosine similarity, and ranks the top five candidates for a shortlist.',
+    desc: 'Reads PDF and DOCX résumés, scores each one against a job description with TF-IDF and cosine similarity, and ranks the top five candidates, cutting down manual screening.',
     stack: ['Python', 'Flask', 'scikit-learn', 'Pandas'], art: 'bars', repo: GH,
   },
   {
