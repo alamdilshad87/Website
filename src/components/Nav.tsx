@@ -1,15 +1,31 @@
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { SECTIONS, SITE } from '../data/site';
 import { emit, scrollToId, useReduced, useTheme } from '../lib/hooks';
 import { Icon } from './icons';
 
+/**
+ * The mark: Dilshad with arms crossed, one arm orange (design), one periwinkle (code).
+ * The eyes are cut out of the head, glance left and right and blink now and then.
+ */
 export function Logo() {
+  const id = useId().replace(/:/g, '');
   return (
-    <svg viewBox="0 0 128 128" aria-hidden="true">
-      <defs><mask id="lgc"><rect width="128" height="128" fill="#fff" /><path d="M47 44L69 64L47 84" fill="none" stroke="#000" strokeWidth="13" /></mask></defs>
-      <path d="M20 18H62C92 18 110 38 110 64C110 90 92 110 62 110H20Z" fill="var(--c-peri)" mask="url(#lgc)" />
-      <rect className="cur" x="74" y="79" width="22" height="11" fill="var(--c-orange)" />
+    <svg viewBox="0 0 128 128" aria-hidden="true" className="lg">
+      <defs>
+        <mask id={`lg-${id}`}>
+          <rect width="128" height="128" fill="#fff" />
+          <g className="lg-eyes">
+            <rect className="lg-eye" x="53" y="30" width="8" height="7" rx="3.5" fill="#000" />
+            <rect className="lg-eye" x="67" y="30" width="8" height="7" rx="3.5" fill="#000" />
+          </g>
+        </mask>
+      </defs>
+      <circle cx="64" cy="34" r="19" fill="currentColor" mask={`url(#lg-${id})`} />
+      <g className="lg-arms" transform="translate(64 88)">
+        <rect x="-12" y="-42" width="24" height="84" rx="12" fill="var(--c-orange)" transform="rotate(-55)" />
+        <rect x="-12" y="-42" width="24" height="84" rx="12" fill="var(--lg-code, var(--c-peri))" transform="rotate(55)" />
+      </g>
     </svg>
   );
 }
