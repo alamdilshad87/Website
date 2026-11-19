@@ -7,8 +7,10 @@ export const SITE = {
   build: '2026.11',
   /** Public email shown in Contact. Empty string hides the row. */
   email: 'alamdilshad87job@gmail.com',
-  /** Path or URL of a résumé PDF (e.g. 'resume.pdf' in /public). Empty hides the button. */
-  resume: '',
+  /** Résumé PDF in /public, for tech visitors. Empty hides the buttons. */
+  resume: 'Md_Dilshad_Alam_Resume.pdf',
+  /** Design portfolio PDF in /public, for creative visitors. Empty hides the buttons. */
+  portfolio: 'Md_Dilshad_Alam_Design_Portfolio.pdf',
   github: 'https://github.com/alamdilshad87',
   linkedin: 'https://www.linkedin.com/in/alamdilshad87',
   behance: 'https://www.behance.net/alamdilshad87',
