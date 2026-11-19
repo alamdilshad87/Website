@@ -16,7 +16,7 @@ export function CommandPalette() {
   const items = useMemo<Item[]>(() => {
     const all: Item[] = [
       ...SECTIONS.map((s) => ({ id: `s-${s.id}`, group: 'Sections', label: s.label, hint: `#${s.id}`, run: () => scrollToId(s.id) })),
-      ...PROJECTS.map((p) => ({ id: `p-${p.id}`, group: 'Projects', label: p.title, hint: p.tag, run: () => { scrollToId('work'); setTimeout(() => emit('open-project', p.id), 450); } })),
+      ...PROJECTS.map((p) => ({ id: `p-${p.id}`, group: 'Projects', label: p.title, hint: p.tag, run: () => { scrollToId('projects'); setTimeout(() => emit('open-project', p.id), 450); } })),
       ...[...new Set(SKILLS.flatMap((g) => g.i.map((s) => s.name)))].map((n) => ({ id: `k-${n}`, group: 'Skills', label: n, hint: 'filter toolbox', run: () => { emit('grep', n); scrollToId('stack'); } })),
       { id: 'l-gh', group: 'Links', label: 'GitHub', hint: 'github.com/alamdilshad87', run: () => window.open(SITE.github, '_blank', 'noopener') },
       { id: 'l-li', group: 'Links', label: 'LinkedIn', hint: 'in/alamdilshad87', run: () => window.open(SITE.linkedin, '_blank', 'noopener') },

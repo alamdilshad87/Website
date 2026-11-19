@@ -12,7 +12,7 @@ import { Journey } from './components/Journey';
 import { Nav } from './components/Nav';
 import { Stack } from './components/Stack';
 import { Stickers } from './components/Stickers';
-import { Work } from './components/Work';
+import { Projects } from './components/Projects';
 import { useReduced } from './lib/hooks';
 
 export default function App() {
@@ -21,7 +21,13 @@ export default function App() {
   // Smooth, inertial scrolling. Off for reduced motion, where native scrolling is kept.
   useEffect(() => {
     if (reduced) return;
-    const lenis = new Lenis({ autoRaf: true, lerp: 0.12 });
+    // `prevent` hands wheel/touch back to the browser inside dialogs and horizontal scrollers,
+    // so the case-study panel, command palette and reel strip scroll natively.
+    const lenis = new Lenis({
+      autoRaf: true,
+      lerp: 0.12,
+      prevent: (node: HTMLElement) => !!node.closest?.('dialog, [data-lenis-prevent], .hscroll'),
+    });
     (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
     // pause page scrolling while a modal dialog is open
     const mo = new MutationObserver(() => {
@@ -44,7 +50,7 @@ export default function App() {
           b={['.NET', 'Angular', 'Python', 'FastAPI', 'Photoshop', 'Illustrator', 'Figma', 'Docker', 'Posters', 'Merch']}
         />
         <About />
-        <Work />
+        <Projects />
         <DesignReel />
         <Journey />
         <Stack />

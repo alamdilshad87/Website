@@ -39,11 +39,11 @@ assets-src/design/       original design slides (source for public/design)
 
 ## Effects
 
-- Hero name in a variable font: weight and width follow the pointer, with an idle pulse on touch screens.
-- Floating photo/design collage with scroll parallax and pointer tilt.
+- Hero with an interactive dot grid (cursor push, click ripple) and an edge-to-edge variable-font name.
+- Footer terminal you can type commands into (help, projects, contact, sudo hire-me).
 - Sticker marquees, magnetic buttons, custom cursor with labels, smooth scrolling.
-- Work list with a cursor-following preview and a case-study drawer.
-- Design reel that zooms in on scroll, with a full-screen viewer.
+- Projects as sticky stacking cards, each opening a case-study drawer.
+- Design reel pinned to the page: scrolling moves it sideways; chapter chips, arrows and keys jump to a slide; swipe strip on phones.
 - Click-to-inspect Gantt timeline (accordion list on phones).
 - Bento toolbox with "used in" tooltips and a ⌘K / Ctrl+K command palette.
 

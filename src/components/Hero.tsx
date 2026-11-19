@@ -1,45 +1,40 @@
-import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react';
+import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { asset, SITE } from '../data/site';
-import { scrollToId, useReduced } from '../lib/hooks';
+import { SITE } from '../data/site';
+import { scrollToId, useMedia, useReduced } from '../lib/hooks';
+import { DotField } from './DotField';
 import { Magnetic, Pic } from './ui';
 
-const LINES = [
-  { text: 'DILSHAD', hollow: false },
-  { text: 'ALAM', hollow: true },
-];
 const REST = { w: 560, wd: 78 };
 const HOT = { w: 800, wd: 100 };
 
 /**
- * The name is set in Bricolage Grotesque, a variable font. Letters near the pointer
- * swell in weight and width and warm to orange; away from it they relax.
- * With no pointer, a slow pulse rolls through the letters instead.
+ * The name, set in a variable font and fitted edge to edge. Letters near the pointer swell
+ * in weight and width and warm to orange; with no pointer a slow pulse rolls through them.
  */
 function VariableName() {
   const ref = useRef<HTMLHeadingElement>(null);
   const reduced = useReduced();
+  const narrow = useMedia('(max-width: 640px)');
+  const lines = narrow ? ['DILSHAD', 'ALAM'] : ['DILSHAD ALAM'];
   const [ready, setReady] = useState(false);
 
-  // fit the longest line to the container at rest settings
   useLayoutEffect(() => {
     const h = ref.current;
     if (!h) return;
     const fit = () => {
       const line = h.querySelector<HTMLElement>('.line');
-      const box = h.parentElement;
-      if (!line || !box) return;
+      if (!line) return;
       h.style.setProperty('--fs', '100px');
       const w = line.getBoundingClientRect().width;
-      if (w > 0) h.style.setProperty('--fs', `${Math.floor(Math.min((100 * box.clientWidth * 0.9) / w, window.innerHeight * 0.24, 280))}px`);
+      if (w > 0) h.style.setProperty('--fs', `${Math.floor((100 * h.clientWidth * 0.9) / w)}px`);
     };
     fit();
     document.fonts?.ready.then(() => { fit(); setReady(true); });
     const ro = new ResizeObserver(fit);
-    ro.observe(h.parentElement!);
-    window.addEventListener('resize', fit);
-    return () => { ro.disconnect(); window.removeEventListener('resize', fit); };
-  }, []);
+    ro.observe(h);
+    return () => ro.disconnect();
+  }, [narrow]);
 
   useEffect(() => {
     const h = ref.current;
@@ -54,21 +49,17 @@ function VariableName() {
     const io = new IntersectionObserver(([en]) => { visible = en.isIntersecting; });
     io.observe(hero);
     const cur = letters.map(() => 0);
-
     const tick = (t: number) => {
       raf = requestAnimationFrame(tick);
       if (!visible) return;
-      const fs = parseFloat(getComputedStyle(h).getPropertyValue('--fs')) || 120;
+      const fs = parseFloat(h.style.getPropertyValue('--fs')) || 120;
       const idle = t - lastMove > 1600;
       letters.forEach((el, i) => {
         let target: number;
-        if (idle) {
-          const s = Math.sin(t * 0.0016 - i * 0.55);
-          target = Math.pow(Math.max(0, s), 8) * 0.85;
-        } else {
+        if (idle) target = Math.pow(Math.max(0, Math.sin(t * 0.0016 - i * 0.5)), 8) * 0.85;
+        else {
           const r = el.getBoundingClientRect();
-          const d = Math.hypot(r.left + r.width / 2 - px, r.top + r.height / 2 - py);
-          target = Math.max(0, 1 - d / (fs * 1.5)) ** 1.6;
+          target = Math.max(0, 1 - Math.hypot(r.left + r.width / 2 - px, r.top + r.height / 2 - py) / (fs * 1.4)) ** 1.6;
         }
         cur[i] += (target - cur[i]) * 0.14;
         const k = cur[i];
@@ -78,36 +69,23 @@ function VariableName() {
       });
     };
     raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      io.disconnect();
-      hero.removeEventListener('pointermove', move);
-      hero.removeEventListener('pointerleave', leave);
-    };
-  }, [reduced]);
+    return () => { cancelAnimationFrame(raf); io.disconnect(); hero.removeEventListener('pointermove', move); hero.removeEventListener('pointerleave', leave); };
+  }, [reduced, narrow]);
 
   let n = 0;
   return (
     <h1 ref={ref} className="vname" aria-label={SITE.name}>
-      <motion.span
-        className="md"
-        aria-hidden="true"
-        initial={reduced ? false : { opacity: 0, y: 20, rotate: -6 }}
-        animate={{ opacity: 1, y: 0, rotate: 0 }}
-        transition={{ duration: 0.8, delay: 0.1, ease: [0.2, 0.8, 0.2, 1] }}
-      >
-        Md
-      </motion.span>
-      {LINES.map((l) => (
-        <span key={l.text} className={`line${l.hollow ? ' hollow' : ''}`} aria-hidden="true">
-          {l.text.split('').map((c, i) => {
+      {lines.map((l, li) => (
+        <span key={l} className={`line${li === lines.length - 1 && narrow ? ' alt' : ''}`} aria-hidden="true">
+          {l.split('').map((c, i) => {
             const idx = n++;
+            if (c === ' ') return <span className="gap" key={i}> </span>;
             return (
-              <span className="ch" key={i}>
+              <span className={`ch${l.indexOf(' ') > -1 && i > l.indexOf(' ') ? ' alt' : ''}`} key={i}>
                 <motion.span
                   initial={reduced ? false : { y: '105%' }}
                   animate={ready || reduced ? { y: '0%' } : undefined}
-                  transition={{ duration: 0.9, delay: 0.15 + idx * 0.05, ease: [0.2, 0.8, 0.2, 1] }}
+                  transition={{ duration: 0.9, delay: 0.25 + idx * 0.045, ease: [0.2, 0.8, 0.2, 1] }}
                   style={reduced ? { ['--w' as string]: 700, ['--wd' as string]: 86 } : undefined}
                 >
                   {c}
@@ -132,19 +110,16 @@ function Rotator() {
     return () => clearInterval(t);
   }, [reduced]);
   return (
-    <p className="role">
+    <p className="statement">
       <span className="sr-only">I build {PHRASES.slice(0, -1).join(', ')} and design {PHRASES.at(-1)}.</span>
       <span aria-hidden="true">
-        I build{' '}
+        I build<br />
         <AnimatePresence mode="wait" initial={false}>
-          <motion.span
-            key={i}
-            className="rot"
-            initial={{ opacity: 0, filter: 'blur(10px)', y: 10 }}
+          <motion.span key={i} className="rot"
+            initial={{ opacity: 0, filter: 'blur(12px)', y: 14 }}
             animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-            exit={{ opacity: 0, filter: 'blur(10px)', y: -10 }}
-            transition={{ duration: 0.45 }}
-          >
+            exit={{ opacity: 0, filter: 'blur(12px)', y: -14 }}
+            transition={{ duration: 0.45 }}>
             {PHRASES[i]}
           </motion.span>
         </AnimatePresence>
@@ -153,103 +128,64 @@ function Rotator() {
   );
 }
 
-type TileDef = {
-  id: string; left?: string; right?: string; top: string; w: string; ratio: string; rot: number; depth: number;
-  img?: string; widths?: number[]; tag?: string; code?: boolean; cursor?: string;
-};
-const TILES: TileDef[] = [
-  { id: 'crowd', left: '1.5%', top: '15%', w: '17vw', ratio: '3/2', rot: -6, depth: 1.2, img: 'photos/team-aaruush', tag: 'Team AARUUSH, main stage' },
-  { id: 'pronite', right: '2.5%', top: '13%', w: '16vw', ratio: '16/9', rot: 5, depth: 0.8, img: 'design/pro-nite', widths: [800, 1500], tag: 'poster · Pro Nite ’24', cursor: 'design' },
-  { id: 'flower', left: '5%', top: '57%', w: '10.5vw', ratio: '5/6', rot: 4, depth: 1.6, img: 'photos/candid-flower', tag: 'AARUUSH ’25' },
-  { id: 'code', right: '2%', top: '50%', w: '16vw', ratio: 'auto', rot: -3, depth: 1, code: true },
-  { id: 'rose', right: '18%', top: '73%', w: '8.5vw', ratio: '2/3', rot: 7, depth: 1.9, img: 'photos/portrait-rose' },
-  { id: 'festive', left: '18%', top: '78%', w: '13vw', ratio: '16/9', rot: -4, depth: 1.4, img: 'design/festive-wall', widths: [800, 1500], cursor: 'design' },
-];
-
-function Tile({ t, progress, mx, my }: { t: TileDef; progress: MotionValue<number>; mx: MotionValue<number>; my: MotionValue<number> }) {
-  const reduced = useReduced();
-  const sy = useTransform(progress, [0, 1], [0, -260 * t.depth]);
-  const px = useTransform(mx, (v) => v * 18 * t.depth);
-  const y = useTransform([sy, my], ([a, b]: number[]) => a + b * 14 * t.depth);
-  const go = () => scrollToId(t.cursor === 'design' ? 'design' : t.code ? 'work' : 'about');
-  return (
-    <motion.div
-      className={`tile${t.code ? ' code' : ''}`}
-      style={{ left: t.left, right: t.right, top: t.top, width: t.w, y: reduced ? 0 : y, x: reduced ? 0 : px }}
-      initial={reduced ? false : { opacity: 0, scale: 0.6, rotate: t.rot * 3 }}
-      animate={{ opacity: 1, scale: 1, rotate: t.rot }}
-      whileHover={reduced ? undefined : { scale: 1.08, rotate: 0, zIndex: 5 }}
-      transition={{ type: 'spring', stiffness: 160, damping: 18, delay: reduced ? 0 : 0.6 + t.depth * 0.15 }}
-      data-cursor={t.cursor ?? (t.code ? 'work' : 'about')}
-      onClick={go}
-    >
-      <div className="card" style={{ aspectRatio: t.ratio }}>
-        {t.code ? (
-          <pre style={{ margin: 0 }}>
-            <div className="bar"><i /><i /><i /></div>
-            <code>
-              <span className="k">const</span> dilshad = {'{'}{'\n'}
-              {'  '}stack: [<span className="s">".NET"</span>, <span className="s">"RAG"</span>],{'\n'}
-              {'  '}cgpa: <span className="n">8.99</span>,{'\n'}
-              {'  '}status: <span className="s">"open"</span>,{'\n'}
-              {'}'};{'\n'}
-              dilshad.<span className="k">ship</span>();
-            </code>
-          </pre>
-        ) : (
-          <Pic base={t.img!} widths={t.widths ?? [640, 1280]} sizes="18vw" alt="" loading="eager" />
-        )}
-      </div>
-      {t.tag && <span className="tag">{t.tag}</span>}
-    </motion.div>
-  );
+function LocalTime() {
+  const [t, setT] = useState('');
+  useEffect(() => {
+    const tick = () => {
+      try { setT(new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' })); } catch { setT(''); }
+    };
+    tick();
+    const i = setInterval(tick, 15000);
+    return () => clearInterval(i);
+  }, []);
+  return <>{t} IST</>;
 }
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReduced();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const mx = useSpring(useMotionValue(0), { stiffness: 60, damping: 20 });
-  const my = useSpring(useMotionValue(0), { stiffness: 60, damping: 20 });
-  const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0.2]);
+  const nameY = useTransform(scrollYProgress, [0, 1], [0, 140]);
+  const cardY = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const rx = useSpring(useMotionValue(0), { stiffness: 120, damping: 14 });
+  const ry = useSpring(useMotionValue(0), { stiffness: 120, damping: 14 });
+  const fadeIn = (d: number) => (reduced ? {} : { initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7, delay: d, ease: [0.2, 0.8, 0.2, 1] as const } });
 
   return (
-    <section
-      ref={ref}
-      id="top"
-      className="hero"
-      onPointerMove={(e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`);
-        e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
-        mx.set((e.clientX - r.left) / r.width - 0.5);
-        my.set((e.clientY - r.top) / r.height - 0.5);
-      }}
-    >
-      <div className="collage" aria-hidden="true">
-        {TILES.map((t) => <Tile key={t.id} t={t} progress={scrollYProgress} mx={mx} my={my} />)}
+    <section ref={ref} id="top" className="hero">
+      <DotField />
+
+      <div className="wrap hero-meta">
+        <motion.p {...fadeIn(0.1)}><span>[01]</span> Software developer<br />& graphic designer</motion.p>
+        <motion.p {...fadeIn(0.18)}><span>[02]</span> Based in {SITE.city}<br /><LocalTime /></motion.p>
+        <motion.p {...fadeIn(0.26)} className="avail"><span className="dot" aria-hidden="true" /> Open to roles<br />India and abroad</motion.p>
       </div>
 
-      <motion.div className="wrap hero-inner" style={{ opacity: reduced ? 1 : fade }}>
-        <p className="hero-eyebrow">// portfolio <em>build {SITE.build}</em> · {SITE.city}</p>
-        <VariableName />
-        <Rotator />
-        <p className="lede">
-          Computer Science graduate from SRMIST who ships APIs, Angular interfaces and retrieval-based AI, and designs the posters, identities and merch around them.
-        </p>
-        <div className="cta">
-          <Magnetic><a className="btn primary" href="#work" onClick={(e) => { e.preventDefault(); scrollToId('work'); }}>See the work →</a></Magnetic>
-          <Magnetic><a className="btn" href="#design" onClick={(e) => { e.preventDefault(); scrollToId('design'); }}>Browse the design reel</a></Magnetic>
-        </div>
-        <p className="status"><span className="dot" aria-hidden="true" />Open to roles in India and abroad</p>
-        <div className="mstrip" aria-hidden="true">
-          <img src={asset('photos/team-aaruush-640.webp')} alt="" />
-          <img src={asset('photos/candid-flower-640.webp')} alt="" />
-          <img src={asset('design/pro-nite-800.webp')} alt="" />
-        </div>
-      </motion.div>
+      <div className="wrap hero-mid">
+        <motion.div {...fadeIn(0.35)}>
+          <Rotator />
+          <p className="lede">CS graduate from SRMIST. I ship APIs, Angular interfaces and retrieval-based AI, and design the posters, identities and merch around them.</p>
+          <div className="cta">
+            <Magnetic><a className="btn primary" href="#projects" onClick={(e) => { e.preventDefault(); scrollToId('projects'); }}>See my projects →</a></Magnetic>
+            <Magnetic><a className="btn" href="#design" onClick={(e) => { e.preventDefault(); scrollToId('design'); }}>Design reel</a></Magnetic>
+          </div>
+        </motion.div>
 
-      <div className="scrollhint" aria-hidden="true"><i />scroll</div>
+        <motion.figure className="hero-card" style={reduced ? undefined : { y: cardY, rotateX: rx, rotateY: ry }}
+          initial={reduced ? false : { opacity: 0, rotate: 12, scale: 0.8 }} animate={{ opacity: 1, rotate: 4, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 120, damping: 16, delay: 0.5 }}
+          onPointerMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); ry.set(((e.clientX - r.left) / r.width - 0.5) * 18); rx.set(-((e.clientY - r.top) / r.height - 0.5) * 18); }}
+          onPointerLeave={() => { rx.set(0); ry.set(0); }}
+          data-cursor="hi!">
+          <Pic base="photos/dev-laptop" sizes="280px" alt="Md Dilshad Alam working on a laptop outdoors" loading="eager" />
+          <figcaption><span>hi, I’m Dilshad</span><b>● online</b></figcaption>
+        </motion.figure>
+      </div>
+
+      <motion.div className="hero-name" style={reduced ? undefined : { y: nameY }}>
+        <VariableName />
+      </motion.div>
+      <p className="hero-hint" aria-hidden="true">click anywhere on the grid ✱ scroll ↓</p>
     </section>
   );
 }

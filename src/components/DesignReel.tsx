@@ -1,139 +1,191 @@
-import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { CAT_LABEL, CHAPTER_FILTERS, CHAPTERS, pad2, type ChapterCat } from '../data/chapters';
+import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { CAT_LABEL, CHAPTERS, pad2 } from '../data/chapters';
 import { asset, SITE } from '../data/site';
-import { useReduced } from '../lib/hooks';
-import { Chips, Pic } from './ui';
+import { useMedia } from '../lib/hooks';
 import { Icon } from './icons';
+import { Pic } from './ui';
 
+/** One slide per image; multi-image chapters become consecutive slides. */
+const SLIDES = CHAPTERS.flatMap((c) => c.img.map((img, k) => ({ c, img, k, key: `${c.n}-${k}` })));
+const N = SLIDES.length;
+/** Vertical scroll per pixel of sideways travel. Below 1 the strip moves faster than the page. */
+const RATE = 0.6;
+
+/**
+ * Desktop: the section pins and vertical scrolling drives the strip sideways.
+ * Chapter chips, arrows and the keyboard jump the page scroll to a slide, so scroll
+ * position and the visible slide never disagree. Phones get a native swipe strip.
+ * Any slide opens a full-screen viewer.
+ */
 export function DesignReel() {
-  const [filter, setFilter] = useState<'all' | ChapterCat>('all');
+  const pinMode = useMedia('(min-width: 860px)', true);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const [dist, setDist] = useState(0);
   const [cur, setCur] = useState(0);
-  const [sub, setSub] = useState(0);
-  const [lb, setLb] = useState(false);
-  const reduced = useReduced();
-  const secRef = useRef<HTMLElement>(null);
+  const [lb, setLb] = useState<number | null>(null);
   const dlg = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLElement | null>(null);
 
-  // the screen grows from a card to full width as the section scrolls in
-  const { scrollYProgress } = useScroll({ target: secRef, offset: ['start end', 'start 20%'] });
-  const scale = useTransform(scrollYProgress, [0, 1], [0.84, 1]);
-  const radius = useTransform(scrollYProgress, [0, 1], [36, 18]);
+  const { scrollYProgress } = useScroll({ target: pinRef, offset: ['start start', 'end end'] });
+  const x = useTransform(scrollYProgress, (p) => -p * dist);
 
-  const c = CHAPTERS[cur];
-  const visible = CHAPTERS.filter((ch) => filter === 'all' || ch.cat === filter).map((ch) => ch.n - 1);
+  // horizontal distance to travel = track width minus the viewport
+  useLayoutEffect(() => {
+    if (!pinMode) return;
+    const t = trackRef.current;
+    if (!t) return;
+    const measure = () => setDist(Math.max(0, t.scrollWidth - window.innerWidth));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(t);
+    window.addEventListener('resize', measure);
+    return () => { ro.disconnect(); window.removeEventListener('resize', measure); };
+  }, [pinMode]);
 
-  const show = useCallback((i: number, s = 0) => { setCur(i); setSub(s); }, []);
-  const step = useCallback((d: number) => {
-    const k = visible.indexOf(cur);
-    show(visible[k < 0 ? 0 : (k + d + visible.length) % visible.length], 0);
-  }, [visible, cur, show]);
-  const lbStep = useCallback((d: number) => {
-    if (c.img.length > 1 && sub + d >= 0 && sub + d < c.img.length) setSub(sub + d);
-    else step(d);
-  }, [c, sub, step]);
+  const slideOffset = useCallback((i: number) => {
+    const el = trackRef.current?.querySelectorAll<HTMLElement>('.hslide')[i];
+    if (!el) return 0;
+    const centre = el.offsetLeft + el.offsetWidth / 2 - window.innerWidth / 2;
+    return Math.min(dist, Math.max(0, centre));
+  }, [dist]);
 
-  const changeFilter = (f: 'all' | ChapterCat) => {
-    setFilter(f);
-    const v = CHAPTERS.filter((ch) => f === 'all' || ch.cat === f).map((ch) => ch.n - 1);
-    if (v.length && !v.includes(cur)) show(v[0]);
-  };
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    if (!pinMode) return;
+    const px = p * dist;
+    let best = 0, bd = Infinity;
+    for (let i = 0; i < N; i++) { const d = Math.abs(slideOffset(i) - px); if (d < bd) { bd = d; best = i; } }
+    setCur(best);
+  });
 
-  // preload the next chapter
+  const jump = useCallback((i: number) => {
+    const k = Math.max(0, Math.min(N - 1, i));
+    if (pinMode) {
+      const pin = pinRef.current;
+      if (!pin) return;
+      const top = pin.getBoundingClientRect().top + window.scrollY;
+      const y = top + slideOffset(k) * RATE;
+      const lenis = (window as unknown as { __lenis?: { scrollTo: (t: number, o?: object) => void } }).__lenis;
+      if (lenis) lenis.scrollTo(y, { duration: 1.1 }); else window.scrollTo({ top: y, behavior: 'smooth' });
+    } else {
+      const el = stripRef.current?.querySelectorAll<HTMLElement>('.hslide')[k];
+      el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }, [pinMode, slideOffset]);
+
+  // phone strip: track which slide is centred
   useEffect(() => {
-    const nxt = CHAPTERS[(cur + 1) % CHAPTERS.length].img[0];
-    const im = new Image(); im.src = asset(`design/${nxt}-1500.webp`);
-  }, [cur]);
+    if (pinMode) return;
+    const s = stripRef.current;
+    if (!s) return;
+    const io = new IntersectionObserver((en) => en.forEach((e) => { if (e.isIntersecting) setCur(Number((e.target as HTMLElement).dataset.i)); }), { root: s, threshold: 0.6 });
+    s.querySelectorAll('.hslide').forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [pinMode]);
 
   useEffect(() => {
     const d = dlg.current;
     if (!d) return;
-    if (lb && !d.open) d.showModal();
-    if (!lb && d.open) d.close();
+    if (lb !== null && !d.open) d.showModal();
+    if (lb === null && d.open) d.close();
   }, [lb]);
 
-  const openLb = (e: React.MouseEvent<HTMLElement>) => { opener.current = e.currentTarget; setLb(true); };
-  const closeLb = () => { setLb(false); opener.current?.focus(); };
+  const openLb = (i: number, el: HTMLElement) => { opener.current = el; setLb(i); };
+  const closeLb = () => { setLb(null); opener.current?.focus(); };
+  const lbStep = (d: number) => setLb((i) => (i === null ? i : (i + d + N) % N));
+
+  const s = SLIDES[cur];
+  const slides = SLIDES.map((sl, i) => (
+    <figure key={sl.key} className="hslide" data-i={i}>
+      <button type="button" className="hs-img" onClick={(e) => openLb(i, e.currentTarget)} data-cursor="open"
+        aria-label={`Open ${sl.c.t}${sl.c.img.length > 1 ? `, part ${sl.k + 1}` : ''} full screen`}>
+        <Pic base={`design/${sl.img}`} widths={[800, 1500]} sizes="(max-width: 860px) 86vw, 70vw" alt="" />
+      </button>
+      <figcaption>
+        <span className="no">N°{pad2(sl.c.n)}</span>
+        <b>{sl.c.t}{sl.c.img.length > 1 ? ` · ${sl.k + 1}/${sl.c.img.length}` : ''}</b>
+        <span>{CAT_LABEL[sl.c.cat]} · {sl.c.yr}</span>
+      </figcaption>
+      {sl.c.photo && sl.k === 0 && (
+        <span className="hs-photo">
+          <Pic base={sl.c.photo.base} sizes="150px" alt={sl.c.photo.caption} />
+          <small>{sl.c.photo.caption}</small>
+        </span>
+      )}
+    </figure>
+  ));
+  const endCard = (
+    <div className="hslide hs-end">
+      <a href={SITE.behance} target="_blank" rel="noopener noreferrer" data-cursor="behance">
+        <span>more on</span><b>Behance ↗</b>
+      </a>
+    </div>
+  );
+
+  const hud = (
+    <div className="wrap hhud">
+      <div className="hh-info" aria-live="polite">
+        <p className="mk">N°{pad2(s.c.n)} · {CAT_LABEL[s.c.cat]} · {s.c.sub}</p>
+        <p className="d">{s.c.d}</p>
+      </div>
+      <div className="hh-ctl">
+        <span className="ct"><b>{pad2(cur + 1)}</b> / {pad2(N)}</span>
+        <button type="button" onClick={() => jump(cur - 1)} aria-label="Previous slide" disabled={cur === 0}>{Icon.prev}</button>
+        <button type="button" onClick={() => jump(cur + 1)} aria-label="Next slide" disabled={cur === N - 1}>{Icon.next}</button>
+      </div>
+      <div className="hh-bar" aria-hidden="true"><i style={{ width: `${((cur + 1) / N) * 100}%` }} /></div>
+      <div className="hh-jump" role="group" aria-label="Jump to chapter">
+        {CHAPTERS.map((c) => {
+          const first = SLIDES.findIndex((x) => x.c.n === c.n);
+          return (
+            <button key={c.n} type="button" aria-current={s.c.n === c.n} onClick={() => jump(first)} title={c.t}>
+              {pad2(c.n)}<span className="sr-only"> {c.t}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   return (
-    <section id="design" ref={secRef} className="sec w-design">
-      <div className="wrap">
+    <section id="design" className="w-design reel-sec"
+      onKeyDown={(e) => { if (lb !== null) return; if (e.key === 'ArrowRight') { e.preventDefault(); jump(cur + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); jump(cur - 1); } }}>
+      <div className="wrap reel-head">
         <div className="sh">
           <div><span className="eyebrow">design/</span><h2 className="h2">The design <em>reel</em></h2></div>
-          <Chips id="design" label="Filter design chapters" items={CHAPTER_FILTERS} value={filter} onChange={changeFilter} />
+          <p className="sh-note">{CHAPTERS.length} chapters for AARUUSH and campus clubs at SRMIST, 2023 to 2025, in Photoshop and Illustrator. {pinMode ? 'Keep scrolling to move through the reel' : 'Swipe through the reel'}, or tap a slide to open it.</p>
         </div>
-        <p className="dfacts"><span><b>{CHAPTERS.length}</b> chapters</span><span><b>2023 to 2025</b></span><span>for <b>AARUUSH</b> and campus clubs at SRMIST</span><span>tools: <b>Photoshop</b> and <b>Illustrator</b></span></p>
+      </div>
 
-        <div className="reel"
-          onKeyDown={(e) => { if ((e.target as HTMLElement).tagName === 'INPUT') return; if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); }}>
-          <ol className="idx" aria-label="Chapters">
-            {CHAPTERS.map((ch, i) => (
-              <li key={ch.n} hidden={!visible.includes(i)}>
-                <button type="button" aria-current={i === cur} onClick={() => show(i)}>
-                  <span className="no">{pad2(ch.n)}</span><span className="tt">{ch.t}</span>
-                </button>
-              </li>
-            ))}
-          </ol>
-
-          <div style={{ minWidth: 0 }}>
-            <motion.div className="screen" style={reduced ? undefined : { scale, borderRadius: radius }} data-cursor="expand">
-              <AnimatePresence initial={false} mode="popLayout">
-                <motion.div key={`${cur}-${sub}`} style={{ position: 'absolute', inset: 0 }}
-                  initial={reduced ? { opacity: 0 } : { clipPath: 'inset(0 0 0 100%)', scale: 1.08 }}
-                  animate={reduced ? { opacity: 1 } : { clipPath: 'inset(0 0 0 0%)', scale: 1 }}
-                  transition={{ duration: reduced ? 0 : 0.7, ease: [0.7, 0, 0.2, 1] }}>
-                  <Pic base={`design/${c.img[sub]}`} widths={[800, 1500]} sizes="(max-width: 900px) 92vw, 860px"
-                    alt={`${c.t} design slide${c.img.length > 1 ? `, part ${sub + 1} of ${c.img.length}` : ''}`}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </motion.div>
-              </AnimatePresence>
-              <button type="button" className="open" onClick={openLb} aria-label={`Open ${c.t} full screen`} />
-              {c.img.length > 1 && (
-                <div className="dots">
-                  {c.img.map((_, k) => <button key={k} type="button" aria-label={`Slide ${k + 1} of ${c.img.length}`} aria-current={k === sub} onClick={() => setSub(k)} />)}
-                </div>
-              )}
-              <div className="ctl">
-                <button type="button" onClick={() => step(-1)} aria-label="Previous chapter">{Icon.prev}</button>
-                <button type="button" onClick={() => step(1)} aria-label="Next chapter">{Icon.next}</button>
-                <button type="button" onClick={openLb} aria-label="Open full screen">{Icon.expand}</button>
-              </div>
-            </motion.div>
-
-            <div className="rmeta" aria-live="polite">
-              <div>
-                <p className="mk">N°{pad2(c.n)} · {CAT_LABEL[c.cat]}</p>
-                <h3>{c.t}</h3>
-                <p className="d">{c.d}</p>
-              </div>
-              <dl><dt>focus</dt><dd>{c.sub}</dd><dt>year</dt><dd>{c.yr}</dd><dt>tools</dt><dd>Photoshop and Illustrator</dd></dl>
-              {c.photo && (
-                <figure className="polaroid">
-                  <Pic base={c.photo.base} sizes="170px" alt={c.photo.caption} />
-                  <figcaption>{c.photo.caption}</figcaption>
-                </figure>
-              )}
-            </div>
+      {pinMode ? (
+        <div ref={pinRef} className="hpin" style={{ height: `calc(${Math.round(dist * RATE)}px + 100vh)` }}>
+          <div className="hsticky">
+            <motion.div ref={trackRef} className="htrack" style={{ x }}>{slides}{endCard}</motion.div>
+            {hud}
           </div>
         </div>
-        <p style={{ marginTop: 34 }}><a className="btn" href={SITE.behance} target="_blank" rel="noopener noreferrer">More on Behance ↗</a></p>
-      </div>
+      ) : (
+        <>
+          <div ref={stripRef} className="htrack hscroll">{slides}{endCard}</div>
+          {hud}
+        </>
+      )}
 
       <dialog ref={dlg} className="lightbox" aria-label="Full screen slide" onClose={closeLb}
         onKeyDown={(e) => { if (e.key === 'ArrowLeft') lbStep(-1); if (e.key === 'ArrowRight') lbStep(1); }}>
-        {lb && (
+        {lb !== null && (
           <>
             <div className="lbbar">
-              <span>N°{pad2(c.n)} · {c.t}{c.img.length > 1 ? ` (${sub + 1}/${c.img.length})` : ''}</span>
+              <span>N°{pad2(SLIDES[lb].c.n)} · {SLIDES[lb].c.t} ({lb + 1}/{N})</span>
               <div>
                 <button type="button" onClick={() => lbStep(-1)} aria-label="Previous slide">{Icon.prev}</button>
                 <button type="button" onClick={() => lbStep(1)} aria-label="Next slide">{Icon.next}</button>
                 <button type="button" onClick={closeLb} aria-label="Close" autoFocus>{Icon.close}</button>
               </div>
             </div>
-            <img src={asset(`design/${c.img[sub]}-1500.webp`)} alt={`${c.t} design slide`} />
+            <img src={asset(`design/${SLIDES[lb].img}-1500.webp`)} alt={`${SLIDES[lb].c.t} design slide`} />
           </>
         )}
       </dialog>

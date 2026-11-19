@@ -23,7 +23,7 @@ export const SITE = {
 
 export const SECTIONS = [
   { id: 'about', label: 'about' },
-  { id: 'work', label: 'work' },
+  { id: 'projects', label: 'projects' },
   { id: 'design', label: 'design' },
   { id: 'journey', label: 'journey' },
   { id: 'stack', label: 'stack' },

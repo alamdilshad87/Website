@@ -7,7 +7,7 @@ import { Pic } from './ui';
 
 type Mode = 'dev' | 'des';
 
-const COPY: Record<Mode, { lead: string; sub: string; tags: string[]; photo: string; alt: string; s1: string; s2: string }> = {
+const COPY: Record<Mode, { lead: string; sub: string; tags: string[]; photo: string; widths?: number[]; alt: string; s1: string; s2: string }> = {
   dev: {
     lead: 'I build .NET services, Angular frontends and retrieval-based AI, and I like being able to explain a system end to end, from the token on the request to the index behind the answer.',
     sub: 'Four months of .NET and Angular training at BridgeLabZ led into SpecGuard, an API analysis platform, and an assistant that answers questions from your own documents on a small local model with no cloud calls.',
@@ -19,8 +19,8 @@ const COPY: Record<Mode, { lead: string; sub: string; tags: string[]; photo: str
     lead: 'I design for AARUUSH, SRMIST’s national-level techno-management fest: posters, banners, standees, Instagram stories, merch, ID cards and tickets that share one identity.',
     sub: 'Fourteen chapters of work from 2023 to 2025, built in Photoshop and Illustrator. I started as a volunteer, ran the creatives team, and now mentor the next group.',
     tags: ['Visual identity', 'Event branding', 'Social media', 'Merchandise'],
-    photo: 'photos/des-poster', alt: 'Md Dilshad Alam holding his printed Pro Nite poster, signed by sand artist Vivek Patil',
-    s1: 'Pro Nite ’24 poster', s2: 'signed by the artist',
+    photo: 'design/dilshad', widths: [360, 720], alt: 'Md Dilshad Alam smiling with arms crossed in front of an orange sun mural',
+    s1: 'Photoshop · Illustrator', s2: 'AARUUSH creatives',
   },
 };
 
@@ -44,7 +44,7 @@ export function About() {
                 exit={{ opacity: 1 }}
                 transition={{ duration: reduced ? 0 : 0.7, ease: [0.7, 0, 0.2, 1] }}
               >
-                <Pic base={c.photo} sizes="(max-width: 880px) 90vw, 460px" alt={c.alt} />
+                <Pic base={c.photo} widths={c.widths} sizes="(max-width: 880px) 90vw, 460px" alt={c.alt} />
               </motion.div>
             </AnimatePresence>
           </div>
