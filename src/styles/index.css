@@ -727,3 +727,20 @@ dialog::backdrop { background: rgb(5 6 12 / .72); backdrop-filter: blur(6px); }
 /* résumé / design-portfolio downloads */
 .dls { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
 .about-dl { margin-top: 18px; }
+
+/* contact form */
+.cmd .masked { letter-spacing: .04em; opacity: .7; }
+.cform { display: grid; gap: 12px; max-width: 640px; margin-top: 26px; padding: 20px; border: 2px solid var(--c-ink); border-radius: 22px; background: var(--panel); box-shadow: 5px 5px 0 var(--c-ink); }
+.cf-k { margin: 0; font: 500 .8rem var(--f-mono); }
+.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 560px) { .cf-row { grid-template-columns: 1fr; } }
+.cform label { display: grid; gap: 6px; }
+.cform label span { font: 500 .7rem var(--f-mono); letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+.cform input, .cform textarea { width: 100%; padding: 11px 14px; border: 1.5px solid var(--c-ink); border-radius: 12px; background: transparent; color: inherit; font: 400 .95rem var(--f-body); resize: vertical; }
+.cform input:focus-visible, .cform textarea:focus-visible { outline: 2px solid var(--c-ink); outline-offset: 2px; }
+.cform input::placeholder, .cform textarea::placeholder { color: currentColor; opacity: .45; }
+.cf-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.cf-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.cf-err { margin: 0; font: 500 .82rem var(--f-mono); }
+.cform.sent { justify-items: start; }
+.cf-done { margin: 0; font: 600 1rem var(--f-body); }
