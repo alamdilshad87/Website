@@ -22,6 +22,7 @@ export function DesignReel() {
   const pinMode = useMedia('(min-width: 860px)', true);
   const pinRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
   const [dist, setDist] = useState(0);
   const [cur, setCur] = useState(0);
@@ -74,6 +75,72 @@ export function DesignReel() {
       el?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
   }, [pinMode, slideOffset]);
+
+  // Desktop and tablets: let sideways gestures move the reel too. A trackpad swipe,
+  // Shift + wheel, or dragging the slides is turned into page scroll, which is what
+  // drives the strip. Lenis ignores sideways wheel input, so without this they did nothing.
+  useEffect(() => {
+    if (!pinMode) return;
+    const el = stickyRef.current;
+    if (!el) return;
+    type L = { scrollTo: (t: number, o?: object) => void; targetScroll: number; limit: number };
+    // Lenis updates targetScroll a frame late, so rapid events keep their own running goal
+    let goal = 0, goalAt = 0;
+    const nudge = (dy: number, immediate = false) => {
+      const l = (window as unknown as { __lenis?: L }).__lenis;
+      if (!l) { window.scrollBy(0, dy); return; }
+      const now = performance.now();
+      const base = now - goalAt < 250 ? goal : l.targetScroll;
+      goal = Math.max(0, Math.min(l.limit, base + dy));
+      goalAt = now;
+      l.scrollTo(goal, { immediate, force: true });
+    };
+    const onWheel = (e: WheelEvent) => {
+      const dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.shiftKey ? e.deltaY : 0;
+      if (!dx) return;
+      e.preventDefault();
+      e.stopPropagation();
+      nudge(dx * RATE);
+    };
+    let sx = 0, sy = 0, lx = 0, down = false, drag = false, dragged = false;
+    const onDown = (e: PointerEvent) => {
+      if (e.button !== 0 || (e.target as Element).closest('.hhud')) return;
+      down = true; drag = false; dragged = false;
+      sx = lx = e.clientX; sy = e.clientY;
+    };
+    const onMove = (e: PointerEvent) => {
+      if (!down) return;
+      if (!drag) {
+        const ax = Math.abs(e.clientX - sx), ay = Math.abs(e.clientY - sy);
+        if (ax > 8 && ax > ay) {
+          drag = dragged = true;
+          el.classList.add('dragging');
+          try { el.setPointerCapture(e.pointerId); } catch { /* pointer already gone */ }
+        } else if (ay > 8) { down = false; return; }
+      }
+      if (drag) { nudge(-(e.clientX - lx) * RATE, true); lx = e.clientX; }
+    };
+    const onUp = () => { down = false; drag = false; el.classList.remove('dragging'); };
+    // a drag should not also count as a click that opens the full-screen viewer
+    const onClick = (e: MouseEvent) => { if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; } };
+    const noGhost = (e: DragEvent) => e.preventDefault();
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('pointerdown', onDown);
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
+    el.addEventListener('pointercancel', onUp);
+    el.addEventListener('click', onClick, true);
+    el.addEventListener('dragstart', noGhost);
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('pointerdown', onDown);
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerup', onUp);
+      el.removeEventListener('pointercancel', onUp);
+      el.removeEventListener('click', onClick, true);
+      el.removeEventListener('dragstart', noGhost);
+    };
+  }, [pinMode]);
 
   // phone strip: track which slide is centred
   useEffect(() => {
@@ -155,13 +222,13 @@ export function DesignReel() {
       <div className="wrap reel-head">
         <div className="sh">
           <div><span className="eyebrow">design/</span><h2 className="h2">The design <em>reel</em></h2></div>
-          <p className="sh-note">{CHAPTERS.length} chapters for AARUUSH and campus clubs at SRMIST, 2023 to 2025, in Photoshop and Illustrator. {pinMode ? 'Keep scrolling to move through the reel' : 'Swipe through the reel'}, or tap a slide to open it.</p>
+          <p className="sh-note">{CHAPTERS.length} chapters for AARUUSH and campus clubs at SRMIST, 2023 to 2025, in Photoshop and Illustrator. {pinMode ? 'Scroll, swipe sideways or drag to move through the reel' : 'Swipe through the reel'}, or tap a slide to open it.</p>
         </div>
       </div>
 
       {pinMode ? (
         <div ref={pinRef} className="hpin" style={{ height: `calc(${Math.round(dist * RATE)}px + 100vh)` }}>
-          <div className="hsticky">
+          <div ref={stickyRef} className="hsticky">
             <motion.div ref={trackRef} className="htrack" style={{ x }}>{slides}{endCard}</motion.div>
             {hud}
           </div>

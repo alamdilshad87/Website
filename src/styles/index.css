@@ -330,7 +330,7 @@ html.has-cursor input, html.has-cursor textarea { cursor: text; }
 .xr-hint { margin: 0; font: 400 .7rem var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: #8A9AD8; }
 .xr-hint .touch { display: none; }
 .xr.flipped .xr-hint { color: #6A665D; }
-@media (max-width: 1180px) { .xr-code .xr-star { right: 0; top: -12%; } }
+@media (max-width: 1180px) { .xr-code .xr-star { right: 0; top: auto; bottom: -30px; } }
 @media (hover: none) { .xr { cursor: auto; } .xr-hint .fine { display: none; } .xr-hint .touch { display: inline; } }
 @media (max-width: 860px) {
   .xr, .xr[data-zoom] { --r: 80px; }
@@ -776,3 +776,9 @@ dialog::backdrop { background: rgb(5 6 12 / .72); backdrop-filter: blur(6px); }
   .cmd button, .cmd a { padding: 6px 10px; font-size: .68rem; }
   .portrait .ast { right: 4px; top: -22px; }
 }
+
+/* design reel: sideways swipe and drag (DesignReel.tsx) */
+.hsticky { touch-action: pan-y; cursor: grab; }
+.hsticky.dragging { cursor: grabbing; user-select: none; }
+.hsticky.dragging .hslide { pointer-events: none; }
+.hsticky img { -webkit-user-drag: none; user-select: none; }
