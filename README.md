@@ -1,229 +1,56 @@
 # Md Dilshad Alam | Portfolio
 
-A responsive, single-page portfolio website for Md Dilshad Alam, featuring a dark studio-inspired aesthetic, project showcase, design reel, journey timeline, searchable technology stack, and contact links.
+Single-page portfolio for a developer + designer. Built with **Vite, React 19, TypeScript, Tailwind CSS v4, Motion and Lenis**. Output is a static site.
 
-This project is built as a static website using plain HTML, CSS, and JavaScript, with no build tooling required.
-
-## Overview
-
-This portfolio is designed to present:
-
-- software engineering and backend/full-stack work
-- AI and ML project experience
-- design and visual branding work
-- career journey and experience timeline
-- skills and technology toolbox
-- professional contact and social links
-
-The visual style uses a futuristic editorial look with bold typography, deep navy/black surfaces, orange accent highlights, and modular grid-based layout sections.
-
-## Project Structure
-
-```text
-WebPortfolio/
-├── index.html
-├── README.md
-├── assets/
-│   ├── css/
-│   │   └── styles.css
-│   ├── js/
-│   │   └── app.js
-│   └── images/
-│       ├── dilshad.jpg
-│       ├── pro-nite.jpg
-│       ├── posters-1.jpg
-│       ├── posters-2.jpg
-│       ├── stories.jpg
-│       └── ...
-└── (other files if added later)
-```
-
-## Files
-
-### index.html
-Contains the full page structure:
-
-- navigation
-- hero section
-- project work section
-- design gallery section
-- journey timeline
-- skill stack section
-- contact section
-- footer markup
-
-### assets/css/styles.css
-Includes all styling rules for:
-
-- layout and spacing
-- typography
-- color palette and theming
-- responsive behavior
-- cards, buttons, nav, forms, gallery, and timeline styling
-- animations and visual effects
-
-### assets/js/app.js
-Contains interactive behavior such as:
-
-- theme toggle
-- nav menu handling
-- project filtering
-- timeline rendering
-- design reel navigation
-- gallery lightbox behavior
-- search/filter for skill tags
-- typing animation and reveal effects
-
-### assets/images
-Stores all static media used by the portfolio, including:
-
-- portrait photo
-- poster assets
-- event graphics
-- social media designs
-- merchandise visuals
-- gallery images
-
-## Features
-
-- Responsive design for desktop and mobile screens
-- Sticky navigation with active section highlighting
-- Theme toggle (light/dark mode behavior)
-- Animated hero highlight and typing text effect
-- Filterable project cards
-- Design chapter carousel and fullscreen modal preview
-- Gantt-style experience timeline
-- Searchable technology stack filter
-- Contact actions with copy links and external URLs
-- Fast static site performance
-
-## Local Development
-
-Because this is a static website, you can run it locally without any installation or package manager.
-
-### Option 1: Python HTTP server
-
-From the project folder, run:
+## Run it
 
 ```bash
-cd C:\Users\bruh9\Downloads\WebPortfolio
-python -m http.server 8000
+npm install
+npm run dev        # http://localhost:5173
+npm run build      # type-check + production build into dist/
+npm run preview    # serve the built dist/
+npm run lint
 ```
 
-Then open:
+## Where things live
 
 ```text
-http://localhost:8000/
+index.html               page shell, meta tags, fonts
+public/                  served as-is (favicon, design slides, photos, project covers)
+src/data/                ALL content: edit these to change the site
+  site.ts                name, links, email, résumé path, section list
+  projects.ts            work section + case studies (repo links, covers)
+  chapters.ts            design reel chapters
+  journey.ts             roles for the timeline
+  skills.ts              toolbox groups
+src/components/          one component per section, plus Nav, Cursor, CommandPalette
+src/styles/index.css     design tokens, colour blocks and all section styles
+scripts/optimize-images.mjs   turns source images into responsive WebP
+assets-src/design/       original design slides (source for public/design)
 ```
 
-### Option 2: Open directly
+## Common edits
 
-You can also open `index.html` directly in a browser, though some local viewing behavior is more consistent through a local server.
+- **Project links / covers:** `src/data/projects.ts`. Every project currently points `repo` at the GitHub profile; replace with each repository URL. Covers for SpecGuard and the Self-Hosted AI system are placeholder SVGs in `public/projects/`; drop real screenshots (1200x750) there and update `cover`.
+- **Résumé:** put `resume.pdf` in `public/` and set `resume: 'resume.pdf'` in `src/data/site.ts`. The download button appears automatically.
+- **Email:** `email` in `src/data/site.ts` (empty string hides it).
+- **Photos:** keep camera originals outside the repo and run
+  `npm run images -- "C:/path/to/photo folder"`. Crops and output names are listed at the top of the script.
 
-## Customization Guide
+## Effects
 
-### Update personal information
-Edit the text content directly in `index.html` for:
+- Hero name in a variable font: weight and width follow the pointer, with an idle pulse on touch screens.
+- Floating photo/design collage with scroll parallax and pointer tilt.
+- Sticker marquees, magnetic buttons, custom cursor with labels, smooth scrolling.
+- Work list with a cursor-following preview and a case-study drawer.
+- Design reel that zooms in on scroll, with a full-screen viewer.
+- Click-to-inspect Gantt timeline (accordion list on phones).
+- Bento toolbox with "used in" tooltips and a ⌘K / Ctrl+K command palette.
 
-- name
-- role/title
-- summary and bio
-- project descriptions
-- certifications and links
-- contact URLs
-- social links
+All motion is switched off when the visitor has *reduce motion* enabled, and the custom cursor only appears with a mouse.
 
-### Change colors or theme
-Modify the CSS variables in `assets/css/styles.css` under the `:root` selector.
+## Deploy
 
-Example variables:
+Any static host works (GitHub Pages, Netlify, Vercel, Cloudflare Pages). Build command `npm run build`, output folder `dist`. Asset paths are relative (`base: './'`), so it also works under a GitHub Pages project URL.
 
-```css
-:root {
-  --bg: #07080E;
-  --fg: #F2EFE9;
-  --o: #FF7A3D;
-  --p: #AAB6FF;
-  --t: #2BE8B0;
-}
-```
-
-### Replace images
-Place your new image files in `assets/images/` and update the corresponding image paths in `index.html` or the data arrays in `assets/js/app.js`.
-
-### Update project data
-The portfolio content is stored in JavaScript arrays inside `assets/js/app.js`. To change:
-
-- project names
-- categories
-- descriptions
-- tech stacks
-- design chapter information
-- journey entries
-
-edit the arrays and objects there.
-
-## Deployment
-
-This portfolio can be deployed to any static hosting service, including:
-
-- GitHub Pages
-- Netlify
-- Vercel
-- Firebase Hosting
-- Azure Static Web Apps
-- any simple web server or CDN
-
-Since it is a static site, deployment is very straightforward.
-
-## Browser Compatibility
-
-This project is designed for modern browsers and uses standard HTML5, CSS, and JavaScript features.
-
-Recommended browsers:
-
-- Chrome
-- Edge
-- Firefox
-- Safari
-
-## Notes
-
-- External Google Fonts are used for typography.
-- The site is intentionally designed as a single-page portfolio rather than a multi-page app.
-- No backend or database is required.
-- The project is easy to maintain and extend for future portfolio additions.
-
-## License
-
-This project is intended for personal portfolio use. If you plan to reuse or modify it for a different project, make sure you have permission for any images, branding, or content included.
-
-## Author
-
-Md Dilshad Alam
-
-## Contact
-
-- LinkedIn: https://www.linkedin.com/in/alamdilshad87
-- GitHub: https://github.com/alamdilshad87
-- Behance: https://www.behance.net/alamdilshad87
-
-## Future Improvements
-
-Possible next steps for the project:
-
-- split JavaScript into modular files
-- add a contact form backend integration
-- add smooth transitions for more animation polish
-- create a version tailored for recruiters or employers
-- add a downloadable resume section
-- migrate to a framework like React or Vite for scalability
-
-## Quick Start Summary
-
-```bash
-cd C:\Users\bruh9\Downloads\WebPortfolio
-python -m http.server 8000
-```
-
-Open `http://localhost:8000/` in your browser.
+After deploying, add an `og:image` (1200x630) and its absolute URL in `index.html` so links preview well when shared.
