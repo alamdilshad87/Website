@@ -763,3 +763,16 @@ dialog::backdrop { background: rgb(5 6 12 / .72); backdrop-filter: blur(6px); }
   .cf-msg { grid-area: msg; grid-template-rows: auto 1fr; } .cf-msg textarea { height: 100%; min-height: 150px; }
   .cf-foot { grid-area: foot; }
 }
+
+/* ---------- responsive fixes ---------- */
+/* grid children default to min-width: auto, which let the link rows grow past the screen */
+.contact > *, .about-grid > * { min-width: 0; }
+.cmds { grid-template-columns: minmax(0, 1fr); }
+.cmd { min-width: 0; }
+@media (max-width: 560px) {
+  .cmd { gap: 6px; padding: 7px 7px 7px 14px; }
+  .cmd code { font-size: .78rem; scrollbar-width: none; }
+  .cmd code::-webkit-scrollbar { display: none; }
+  .cmd button, .cmd a { padding: 6px 10px; font-size: .68rem; }
+  .portrait .ast { right: 4px; top: -22px; }
+}
